@@ -54,6 +54,15 @@ type contact struct {
 	Trigger              []string  `json:"trigger"`
 }
 
+type notes struct {
+	Data []note `json:"data"`
+}
+
+type note struct {
+	Title   string `json:"Note_Title,omitempty"`
+	Content string `json:"Note_Content,omitempty"`
+}
+
 type updateContact struct {
 	Code    string `json:"code"`
 	Details struct {
@@ -162,6 +171,27 @@ type getContactItem struct {
 	LeadSource         interface{}   `json:"Lead_Source"`
 	Tag                []interface{} `json:"Tag"`
 	ApprovalState      string        `json:"$approval_state"`
+}
+
+type createNote struct {
+	Data []struct {
+		Message string `json:"message"`
+		Details struct {
+			CreatedBy struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"created_by"`
+			ID         string `json:"id"`
+			ModifiedBy struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"modified_by"`
+			ModifiedTime time.Time `json:"modified_time"`
+			CreatedTime  time.Time `json:"created_time"`
+		} `json:"details"`
+		Status string `json:"status"`
+		Code   string `json:"code"`
+	} `json:"data"`
 }
 
 var auth Auth
@@ -279,6 +309,39 @@ func FindContact(email string) (string, error) {
 	}
 
 	return res.Data[0].ID, nil
+}
+
+func AddContactNote(id string, title string, content string) (string, error) {
+
+	b, err := json.Marshal(notes{Data: []note{{Title: title, Content: content}}})
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", "https://www.zohoapis.eu/crm/v3/Contacts/"+id+"/Notes", bytes.NewReader(b))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusCreated {
+		b, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			return "", err
+		}
+		log.Fatalln(string(b))
+	}
+	var res createNote
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return "", err
+	}
+	return res.Data[0].Details.ID, nil
 }
 
 func CreateContact(item Contact) (string, error) {
