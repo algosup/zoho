@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -46,6 +47,9 @@ type Contact struct {
 	GameScore30     int    `json:"Game_Score_30,omitempty"`
 	GameMaxScore    int    `json:"Game_Max_Score,omitempty"`
 	GameDurationMin int    `json:"Game_Duration_Min,omitempty"`
+	OpenHouse       *Date  `json:"Open_House,omitempty"`  // Pointer to support omitempty
+	CodingCamp      *Date  `json:"Coding_Camp,omitempty"` // Pointer to support omitempty
+	Immersion       *Date  `json:"Immersion,omitempty"`   // Pointer to support omitempty
 }
 
 type contact struct {
@@ -246,7 +250,7 @@ func (t Time) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 func (t *Time) UnmarshalJSON(b []byte) (err error) {
-	date, err := time.Parse(`"2006-01-02T15:04:05"`, string(b))
+	date, err := time.Parse(`"2006-01-02T15:04:05Z07:00"`, string(b))
 	if err != nil {
 		return err
 	}
@@ -409,6 +413,41 @@ func UpdateContact(item Contact) error {
 		return err
 	}
 	return nil
+}
+
+func clearContactField(id string, field string) error {
+	json := fmt.Sprintf(`{"data":[{"id":"%s","%s":null}]}`, id, field)
+	req, err := http.NewRequest("PUT", "https://www.zohoapis.eu/crm/v3/Contacts", strings.NewReader(json))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+	if r.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		log.Fatalln(string(b))
+	}
+
+	return nil
+}
+
+func CancelOpenHouse(contactId string) error {
+	return clearContactField(contactId, "Open_House")
+}
+
+func CancelImmersion(contactId string) error {
+	return clearContactField(contactId, "Immersion")
+}
+
+func CancelCodingCamp(contactId string) error {
+	return clearContactField(contactId, "Coding_Camp")
 }
 
 /*
