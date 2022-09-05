@@ -134,7 +134,7 @@ type GetContactItem struct {
 	CreatedTime   time.Time   `json:"Created_Time"`
 	PotentialLoan interface{} `json:"Potential_loan"`
 	Editable      bool        `json:"$editable"`
-	GameStart     interface{} `json:"Game_Start"`
+	GameStart     time.Time   `json:"Game_Start"`
 	TestINE       interface{} `json:"test_INE"`
 	CreatedBy     struct {
 		Name  string `json:"name"`
@@ -159,7 +159,7 @@ type GetContactItem struct {
 	FullName             string        `json:"Full_Name"`
 	School               interface{}   `json:"School"`
 	Review               interface{}   `json:"$review"`
-	GameDurationMin      interface{}   `json:"Game_Duration_Min"`
+	GameDurationMin      int           `json:"Game_Duration_Min"`
 	Phone                string        `json:"Phone"`
 	StudyLevel           interface{}   `json:"Study_level"`
 	TestScoringCampaigns interface{}   `json:"test_Scoring_Campaigns"`
