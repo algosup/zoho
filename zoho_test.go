@@ -27,3 +27,14 @@ func TestCreateContact(t *testing.T) {
 	}
 
 }
+
+func TestFindContact(t *testing.T) {
+	id, err := FindContact("franck.jeannin@algosup.com")
+	if err != nil {
+		panic(err)
+	}
+	_, err = GetContact(id)
+	if err != nil {
+		panic(err)
+	}
+}

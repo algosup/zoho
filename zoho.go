@@ -91,7 +91,7 @@ type updateContactResult struct {
 }
 
 type getContactResponse struct {
-	Data []getContactItem `json:"data"`
+	Data []GetContactItem `json:"data"`
 	Info struct {
 		PerPage           int         `json:"per_page"`
 		NextPageToken     interface{} `json:"next_page_token"`
@@ -103,78 +103,88 @@ type getContactResponse struct {
 	} `json:"info"`
 }
 
-type getContactItem struct {
-	Owner struct {
+type GetContactItem struct {
+	Origin interface{} `json:"Origin"`
+	Owner  struct {
 		Name  string `json:"name"`
 		ID    string `json:"id"`
 		Email string `json:"email"`
 	} `json:"Owner"`
-	Email               interface{}   `json:"Email"`
-	RentrE              interface{}   `json:"Rentr_e"`
-	CurrencySymbol      string        `json:"$currency_symbol"`
-	FieldStates         interface{}   `json:"$field_states"`
-	SharingPermission   string        `json:"$sharing_permission"`
-	EmailParent         interface{}   `json:"Email_parent"`
-	LastActivityTime    interface{}   `json:"Last_Activity_Time"`
-	ScoreJeu            interface{}   `json:"Score_jeu"`
-	DateJeu             interface{}   `json:"Date_jeu"`
-	State_              string        `json:"$state"`
-	TestEventCount      int           `json:"test_Event_Count"`
-	UnsubscribedMode    interface{}   `json:"Unsubscribed_Mode"`
-	Converted           bool          `json:"$converted"`
-	ProcessFlow         bool          `json:"$process_flow"`
-	Street              interface{}   `json:"Street"`
-	ZipCode             interface{}   `json:"Zip_Code"`
-	ID                  string        `json:"id"`
-	Etudes              interface{}   `json:"Etudes"`
-	TestEventAttendance []interface{} `json:"Test_Event_Attendance"`
-	HistoriqueRdv       interface{}   `json:"Historique_rdv"`
-	Approval            struct {
+	Email             string      `json:"Email"`
+	CurrencySymbol    string      `json:"$currency_symbol"`
+	FieldStates       interface{} `json:"$field_states"`
+	OtherPhone        interface{} `json:"Other_Phone"`
+	MailingState      interface{} `json:"Mailing_State"`
+	SharingPermission string      `json:"$sharing_permission"`
+	Immersion         interface{} `json:"Immersion"`
+	LastActivityTime  time.Time   `json:"Last_Activity_Time"`
+	State             string      `json:"$state"`
+	UnsubscribedMode  interface{} `json:"Unsubscribed_Mode"`
+	ProcessFlow       bool        `json:"$process_flow"`
+	GameScore30       int         `json:"Game_Score_30"`
+	MailingCountry    interface{} `json:"Mailing_Country"`
+	ID                string      `json:"id"`
+	Approval          struct {
 		Delegate bool `json:"delegate"`
 		Approve  bool `json:"approve"`
 		Reject   bool `json:"reject"`
 		Resubmit bool `json:"resubmit"`
 	} `json:"$approval"`
-	PhoneParent        interface{} `json:"Phone_parent"`
-	PotentialLoan      interface{} `json:"Potential_loan"`
-	Editable           bool        `json:"$editable"`
-	City               interface{} `json:"City"`
-	PANA               interface{} `json:"P_A_N_A"`
-	HistoriqueVNements interface{} `json:"Historique_v_nements"`
-	ConvertedAccount   interface{} `json:"Converted_Account"`
-	State              interface{} `json:"State"`
-	Country            interface{} `json:"Country"`
-	Description        interface{} `json:"Description"`
-	ReviewProcess      struct {
+	EnrichStatusS interface{} `json:"Enrich_Status__s"`
+	CreatedTime   time.Time   `json:"Created_Time"`
+	PotentialLoan interface{} `json:"Potential_loan"`
+	Editable      bool        `json:"$editable"`
+	GameStart     interface{} `json:"Game_Start"`
+	TestINE       interface{} `json:"test_INE"`
+	CreatedBy     struct {
+		Name  string `json:"name"`
+		ID    string `json:"id"`
+		Email string `json:"email"`
+	} `json:"Created_By"`
+	SecondaryEmail interface{} `json:"Secondary_Email"`
+	GameMaxScore   int         `json:"Game_Max_Score"`
+	Description    interface{} `json:"Description"`
+	MailingZip     interface{} `json:"Mailing_Zip"`
+	VendorName     interface{} `json:"Vendor_Name"`
+	ReviewProcess  struct {
 		Approve  bool `json:"approve"`
 		Reject   bool `json:"reject"`
 		Resubmit bool `json:"resubmit"`
 	} `json:"$review_process"`
-	CanvasID           interface{}   `json:"$canvas_id"`
-	Salutation         interface{}   `json:"Salutation"`
-	FullName           string        `json:"Full_Name"`
-	FirstName          interface{}   `json:"First_Name"`
-	LeadStatus         interface{}   `json:"Lead_Status"`
-	School             interface{}   `json:"School"`
-	ConvertedDeal      interface{}   `json:"Converted_Deal"`
-	Review             interface{}   `json:"$review"`
-	LeadConversionTime interface{}   `json:"Lead_Conversion_Time"`
-	Phone              interface{}   `json:"Phone"`
-	StudyLevel         interface{}   `json:"Study_level"`
-	ZiaVisions         interface{}   `json:"$zia_visions"`
-	ArrivalAtSchool    interface{}   `json:"Arrival_at_school"`
-	ConvertedDetail    struct{}      `json:"$converted_detail"`
-	ProchaineTape      interface{}   `json:"Prochaine_tape"`
-	UnsubscribedTime   interface{}   `json:"Unsubscribed_Time"`
-	ConvertedContact   interface{}   `json:"Converted_Contact"`
-	Orchestration      interface{}   `json:"$orchestration"`
-	DateDeNaissance    interface{}   `json:"Date_de_naissance"`
-	Date1ErContact     interface{}   `json:"Date_1er_contact"`
-	LastName           string        `json:"Last_Name"`
-	InMerge            bool          `json:"$in_merge"`
-	LeadSource         interface{}   `json:"Lead_Source"`
-	Tag                []interface{} `json:"Tag"`
-	ApprovalState      string        `json:"$approval_state"`
+	MailingStreet        interface{}   `json:"Mailing_Street"`
+	CanvasID             interface{}   `json:"$canvas_id"`
+	Salutation           interface{}   `json:"Salutation"`
+	OpenHouse            interface{}   `json:"Open_House"`
+	FirstName            string        `json:"First_Name"`
+	FullName             string        `json:"Full_Name"`
+	School               interface{}   `json:"School"`
+	Review               interface{}   `json:"$review"`
+	GameDurationMin      interface{}   `json:"Game_Duration_Min"`
+	Phone                string        `json:"Phone"`
+	StudyLevel           interface{}   `json:"Study_level"`
+	TestScoringCampaigns interface{}   `json:"test_Scoring_Campaigns"`
+	AccountName          interface{}   `json:"Account_Name"`
+	AdmissionLevel       interface{}   `json:"Admission_Level"`
+	EmailOptOut          bool          `json:"Email_Opt_Out"`
+	ZiaVisions           interface{}   `json:"$zia_visions"`
+	CodingCamp           interface{}   `json:"Coding_Camp"`
+	DateOfBirth          interface{}   `json:"Date_of_Birth"`
+	MailingCity          interface{}   `json:"Mailing_City"`
+	UnsubscribedTime     interface{}   `json:"Unsubscribed_Time"`
+	PlaceOfBirth         interface{}   `json:"Place_of_birth"`
+	JobTitle             interface{}   `json:"Job_Title"`
+	Orchestration        interface{}   `json:"$orchestration"`
+	Pipeline             interface{}   `json:"Pipeline"`
+	ProgramingExperience interface{}   `json:"Programing_Experience"`
+	Type                 interface{}   `json:"Type"`
+	S                    interface{}   `json:"s"`
+	LastName             string        `json:"Last_Name"`
+	InMerge              bool          `json:"$in_merge"`
+	LeadSource           string        `json:"Lead_Source"`
+	Tag                  []interface{} `json:"Tag"`
+	ApprovalState        string        `json:"$approval_state"`
+	Pathfinder           interface{}   `json:"$pathfinder"`
+	LastEnrichedTimeS    interface{}   `json:"Last_Enriched_Time__s"`
 }
 
 type createNote struct {
@@ -295,7 +305,7 @@ func FindContact(email string) (string, error) {
 		return "", err
 	}
 	defer r.Body.Close()
-	fmt.Println(r.StatusCode)
+
 	if r.StatusCode == http.StatusNoContent {
 		return "", nil
 	}
@@ -450,7 +460,6 @@ func CancelCodingCamp(contactId string) error {
 	return clearContactField(contactId, "Coding_Camp")
 }
 
-/*
 func GetContact(id string) (*GetContactItem, error) {
 	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Contacts/"+id, nil)
 	if err != nil {
@@ -463,11 +472,19 @@ func GetContact(id string) (*GetContactItem, error) {
 	}
 	defer r.Body.Close()
 
-	var res GetLeadResponse
+	if r.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+		log.Fatalln(string(b))
+	}
+
+	var res getContactResponse
 	err = json.NewDecoder(r.Body).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
+
 	return &res.Data[0], nil
 }
-*/
