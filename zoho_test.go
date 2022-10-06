@@ -38,3 +38,14 @@ func TestFindContact(t *testing.T) {
 		panic(err)
 	}
 }
+
+func TestFindContact2(t *testing.T) {
+	id, err := FindContact("eb232235@gmail.com")
+	if err != nil {
+		panic(err)
+	}
+	_, err = GetContact(id)
+	if err != nil {
+		panic(err)
+	}
+}

@@ -217,6 +217,7 @@ func init() {
 		if err == nil {
 			break
 		}
+		log.Println(err)
 		time.Sleep(100 * time.Millisecond)
 	}
 	if err != nil {
@@ -225,7 +226,14 @@ func init() {
 	go func() {
 		for {
 			time.Sleep(time.Duration(auth.ExpiresIn-60) * time.Second)
-			err := authenticate()
+			for i := 0; i < 10; i++ {
+				err := authenticate()
+				if err == nil {
+					break
+				}
+				log.Println(err)
+				time.Sleep(100 * time.Millisecond)
+			}
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -279,7 +287,8 @@ func authenticate() error {
 		if err != nil {
 			return err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return errors.New(r.Status)
 	}
 	err = json.NewDecoder(r.Body).Decode(&auth)
 	if err != nil {
@@ -314,7 +323,8 @@ func FindContact(email string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return "", errors.New(r.Status)
 	}
 	var res getContactResponse
 	err = json.NewDecoder(r.Body).Decode(&res)
@@ -348,7 +358,8 @@ func AddContactNote(id string, title string, content string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return "", errors.New(r.Status)
 	}
 	var res createNote
 	err = json.NewDecoder(r.Body).Decode(&res)
@@ -384,7 +395,8 @@ func CreateContact(item Contact) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return "", errors.New(r.Status)
 	}
 	var res updateContactResult
 	err = json.NewDecoder(r.Body).Decode(&res)
@@ -414,7 +426,8 @@ func UpdateContact(item Contact) error {
 		if err != nil {
 			return err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return errors.New(r.Status)
 	}
 
 	var res updateContactResult
@@ -442,7 +455,8 @@ func clearContactField(id string, field string) error {
 		if err != nil {
 			return err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return errors.New(r.Status)
 	}
 
 	return nil
@@ -477,7 +491,8 @@ func GetContact(id string) (*GetContactItem, error) {
 		if err != nil {
 			return nil, err
 		}
-		log.Fatalln(string(b))
+		log.Println(string(b))
+		return nil, errors.New(r.Status)
 	}
 
 	var res getContactResponse
