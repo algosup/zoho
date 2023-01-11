@@ -218,10 +218,10 @@ func init() {
 			break
 		}
 		log.Println(err)
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
 	}
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 	go func() {
 		for {
@@ -232,10 +232,10 @@ func init() {
 					break
 				}
 				log.Println(err)
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
 			}
 			if err != nil {
-				log.Fatalln(err)
+				log.Println(err)
 			}
 		}
 	}()
