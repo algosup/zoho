@@ -80,10 +80,10 @@ func TestDeal(t *testing.T) {
 		panic(err)
 	}
 	_, err = CreateDeal(Deal{
-		DealName:    "ForDeal FORDEAL",
-		Stage:       "Candidature",
-		ContactName: id,
-		Pipeline:    "TEST",
+		DealName:  "ForDeal FORDEAL",
+		Stage:     "Candidature",
+		ContactId: id,
+		Pipeline:  "TEST",
 	})
 	if err != nil {
 		panic(err)

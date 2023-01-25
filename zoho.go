@@ -59,11 +59,11 @@ type contact struct {
 }
 
 type Deal struct {
-	ID          string `json:"id,omitempty"`
-	ContactName string `json:"Contact_Name,omitempty"`
-	DealName    string `json:"Deal_Name,omitempty"`
-	Stage       string `json:"Stage,omitempty"`
-	Pipeline    string `json:"Pipeline,omitempty"`
+	ID        string `json:"id,omitempty"`
+	ContactId string `json:"Contact_Name,omitempty"`
+	DealName  string `json:"Deal_Name,omitempty"`
+	Stage     string `json:"Stage,omitempty"`
+	Pipeline  string `json:"Pipeline,omitempty"`
 }
 
 type deal struct {
