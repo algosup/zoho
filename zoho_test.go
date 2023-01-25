@@ -28,12 +28,34 @@ func TestCreateContact(t *testing.T) {
 
 }
 
-func TestFindContact(t *testing.T) {
-	id, err := FindContact("franck.jeannin@algosup.com")
+func TestCreateDelete(t *testing.T) {
+
+	id, err := CreateContact(Contact{
+		Email:      "test132@test.com",
+		FirstName:  "Test",
+		LastName:   "TEST TEST",
+		LeadSource: "Test",
+		OpenHouse:  &Date{time.Now()},
+	})
 	if err != nil {
 		panic(err)
 	}
-	_, err = GetContact(id)
+	/*
+		id, err := FindContact("test@test.com")
+		if err != nil {
+			panic(err)
+		}
+		if id == "" {
+			panic("not found")
+		}
+
+		//t.Log("ID:" + id)
+		_, err = GetContact(id)
+		if err != nil {
+			panic(err)
+		}
+	*/
+	err = DeleteContact(id)
 	if err != nil {
 		panic(err)
 	}

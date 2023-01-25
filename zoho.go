@@ -15,7 +15,7 @@ import (
 )
 
 // https://api-console.zoho.eu/
-// ZohoCRM.modules.ALL,ZohoSearch.securesearch.READ
+// ZohoCRM.modules.ALL,ZohoSearch.securesearch.READ,ZohoCRM.coql.READ
 
 // curl -X POST -F grant_type=authorization_code -F client_id=1000.XXXXXXXXXX -F client_secret=XXXXX -F code=1000.XXXXXXXXXXXXXXXXXX https://accounts.zoho.eu/oauth/v2/token
 
@@ -101,6 +101,12 @@ type getContactResponse struct {
 		PageTokenExpiry   interface{} `json:"page_token_expiry"`
 		MoreRecords       bool        `json:"more_records"`
 	} `json:"info"`
+}
+
+type findContactResponse struct {
+	Data []struct {
+		ID string `json:"id"`
+	} `json:"data"`
 }
 
 type GetContactItem struct {
@@ -302,9 +308,9 @@ func authenticate() error {
 }
 
 // Scope:  ZohoCRM.modules.all and ZohoSearch.securesearch.READ
-
+/*
 func FindContact(email string) (string, error) {
-	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Contacts/search?email="+email, nil)
+	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Contacts/search?email="+url.QueryEscape(email), nil)
 	if err != nil {
 		return "", err
 	}
@@ -332,6 +338,47 @@ func FindContact(email string) (string, error) {
 		return "", err
 	}
 
+	return res.Data[0].ID, nil
+}*/
+
+type selectQuery struct {
+	Query string `json:"select_query"`
+}
+
+// scope=ZohoCRM.coql.READ (and) scope=ZohoCRM.modules.all
+
+func FindContact(email string) (string, error) {
+
+	b, err := json.Marshal(&selectQuery{Query: fmt.Sprintf("SELECT id FROM Contacts WHERE Email='%s'", email)})
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", "https://www.zohoapis.eu/crm/v3/coql", bytes.NewReader(b))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	req.Header.Set("Content-Type", "text/plain")
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		b, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			return "", err
+		}
+		log.Println(string(b))
+		return "", errors.New(r.Status)
+	}
+	var res findContactResponse
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return "", err
+	}
 	return res.Data[0].ID, nil
 }
 
@@ -502,4 +549,28 @@ func GetContact(id string) (*GetContactItem, error) {
 	}
 
 	return &res.Data[0], nil
+}
+
+func DeleteContact(id string) error {
+	req, err := http.NewRequest("DELETE", "https://www.zohoapis.eu/crm/v3/Contacts/"+id, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		log.Println(string(b))
+		return errors.New(r.Status)
+	}
+
+	return nil
 }
