@@ -88,5 +88,8 @@ func TestDeal(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
+	err = DeleteContact(id)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -13,15 +13,16 @@ import (
 func SendMail(fromName, fromEmail, toName, toEmail, contactID, templateID string) error {
 	b, err := json.Marshal(&mail{
 		Data: []mailData{{From: userEmail{UserName: fromName, Email: fromEmail},
-			To:       userEmail{UserName: toName, Email: toEmail},
+			To:       []userEmail{{UserName: toName, Email: toEmail}},
 			Template: &template{ID: templateID},
+			OrgEmail: true,
 		}}})
 	if err != nil {
 		return err
 	}
 
-	log.Println((string)(b))
-	req, err := http.NewRequest("POST", "https://www.zohoapis.eu/crm/v3/Contacts/"+contactID+"/actions/send_mail", bytes.NewReader(b))
+	//log.Println((string)(b))
+	req, err := http.NewRequest("POST", "https://www.zohoapis.eu/crm/v3/contacts/"+contactID+"/actions/send_mail", bytes.NewReader(b))
 	if err != nil {
 		return err
 	}
@@ -71,17 +72,17 @@ type template struct {
 	ID string `json:"id"`
 }
 type mailData struct {
-	From          userEmail  `json:"from"`
-	To            userEmail  `json:"to"`
-	Cc            *userEmail `json:"cc,omitempty"`
-	Bcc           *userEmail `json:"bcc,omitempty"`
-	ReplyTo       *userEmail `json:"reply_to,omitempty"`
-	OrgEmail      bool       `json:"org_email"`
-	InReplyTo     string     `json:"in_reply_to,omitempty"`
-	ScheduledTime *time.Time `json:"scheduled_time,omitempty"`
-	Subject       string     `json:"subject,omitempty"`
-	Content       string     `json:"content,omitempty"`
-	MailFormat    string     `json:"mail_format,omitempty"`
+	From          userEmail    `json:"from"`
+	To            []userEmail  `json:"to"`
+	Cc            []*userEmail `json:"cc,omitempty"`
+	Bcc           []*userEmail `json:"bcc,omitempty"`
+	ReplyTo       *userEmail   `json:"reply_to,omitempty"`
+	OrgEmail      bool         `json:"org_email"`
+	InReplyTo     string       `json:"in_reply_to,omitempty"`
+	ScheduledTime *time.Time   `json:"scheduled_time,omitempty"`
+	Subject       string       `json:"subject,omitempty"`
+	Content       string       `json:"content,omitempty"`
+	MailFormat    string       `json:"mail_format,omitempty"`
 	Attachments   []struct {
 		ID string `json:"id"`
 	} `json:"attachments,omitempty"`

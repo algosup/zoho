@@ -13,10 +13,9 @@ func TestSendMail(t *testing.T) {
 		panic(err)
 	}
 
-	CheckValidFrom()
+	//CheckValidFrom()
 
-	//https://crm.zoho.eu/crm/org20082710153/settings/templates?type=email&templateId=477339000002907121
-	err = SendMail("Franck JEANNIN", "franck.jeannin@algosup.com", "Franck JEANNIN", "email@franckjeannin.com", id, "477339000002907121")
+	err = SendMail("Natacha BOEZ", "natacha.boez@algosup.com", "Bob", "email@franckjeannin.com", id, "477339000002907121")
 	if err != nil {
 		panic(err)
 	}
