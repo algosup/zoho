@@ -15,7 +15,7 @@ import (
 )
 
 // https://api-console.zoho.eu/
-// ZohoCRM.modules.ALL,ZohoSearch.securesearch.READ,ZohoCRM.coql.READ
+// ZohoCRM.modules.ALL,ZohoSearch.securesearch.READ,ZohoCRM.coql.READ,ZohoCRM.send_mail.all.CREATE,ZohoCRM.settings.emails.READ
 
 // curl -X POST -F grant_type=authorization_code -F client_id=1000.XXXXXXXXXX -F client_secret=XXXXX -F code=1000.XXXXXXXXXXXXXXXXXX https://accounts.zoho.eu/oauth/v2/token
 
