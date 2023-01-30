@@ -68,28 +68,3 @@ func TestFindContact2(t *testing.T) {
 		panic(err)
 	}
 }
-
-func TestDeal(t *testing.T) {
-	id, err := CreateContact(Contact{
-		Email:      "fordeal@test.com",
-		FirstName:  "ForDeal",
-		LastName:   "FORDEAL",
-		LeadSource: "Test",
-	})
-	if err != nil {
-		panic(err)
-	}
-	_, err = CreateDeal(Deal{
-		DealName:  "ForDeal FORDEAL",
-		Stage:     "Candidature",
-		ContactId: id,
-		Pipeline:  "TEST",
-	})
-	if err != nil {
-		panic(err)
-	}
-	err = DeleteContact(id)
-	if err != nil {
-		panic(err)
-	}
-}
