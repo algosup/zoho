@@ -58,20 +58,6 @@ type contact struct {
 	Trigger              []string  `json:"trigger"`
 }
 
-type Deal struct {
-	ID        string `json:"id,omitempty"`
-	ContactId string `json:"Contact_Name,omitempty"`
-	DealName  string `json:"Deal_Name,omitempty"`
-	Stage     string `json:"Stage,omitempty"`
-	Pipeline  string `json:"Pipeline,omitempty"`
-}
-
-type deal struct {
-	Data                 []Deal   `json:"data"`
-	DuplicateCheckFields []string `json:"duplicate_check_fields"`
-	Trigger              []string `json:"trigger"`
-}
-
 type notes struct {
 	Data []note `json:"data"`
 }
