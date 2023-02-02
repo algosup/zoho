@@ -68,3 +68,10 @@ func TestFindContact2(t *testing.T) {
 		panic(err)
 	}
 }
+
+func TestContactEmails(t *testing.T) {
+	_, err := GetContactEmails("477339000004039009")
+	if err != nil {
+		panic(err)
+	}
+}
