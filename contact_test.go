@@ -75,3 +75,11 @@ func TestContactEmails(t *testing.T) {
 		panic(err)
 	}
 }
+
+func TestContactNotes(t *testing.T) {
+	c, d, err := GetContactNotesCount("477339000004039009")
+	if err != nil {
+		panic(err)
+	}
+	t.Log(c, d)
+}
