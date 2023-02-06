@@ -77,11 +77,11 @@ type ContactEmail struct {
 type contactEmails struct {
 	Emails []ContactEmail `json:"Emails"`
 	Info   struct {
-		PerPage     int  `json:"per_page"`
-		NextIndex   int  `json:"next_index"`
-		Count       int  `json:"count"`
-		PrevIndex   int  `json:"prev_index"`
-		MoreRecords bool `json:"more_records"`
+		PerPage     int    `json:"per_page"`
+		NextIndex   string `json:"next_index"`
+		Count       int    `json:"count"`
+		PrevIndex   string `json:"prev_index"`
+		MoreRecords bool   `json:"more_records"`
 	} `json:"info"`
 }
 
