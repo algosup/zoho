@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -76,6 +77,9 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 	}
 	defer r.Body.Close()
 
+	if r.StatusCode == http.StatusNoContent {
+		return &findContactResponse{}, nil
+	}
 	if r.StatusCode != http.StatusOK {
 		b, err = ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -104,7 +108,7 @@ func AutoUpdateAllContacts() error {
 			continue
 		}
 	}
-	c, err = getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is not null ORDER BY Last_Update ASC")
+	c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
 	if err != nil {
 		return err
 	}
