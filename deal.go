@@ -11,11 +11,12 @@ import (
 )
 
 type Deal struct {
-	ID        string `json:"id,omitempty"`
-	ContactId string `json:"Contact_Name,omitempty"`
-	DealName  string `json:"Deal_Name,omitempty"`
-	Stage     string `json:"Stage,omitempty"`
-	Pipeline  string `json:"Pipeline,omitempty"`
+	ID         string `json:"id,omitempty"`
+	ContactId  string `json:"Contact_Name,omitempty"`
+	DealName   string `json:"Deal_Name,omitempty"`
+	Stage      string `json:"Stage,omitempty"`
+	Pipeline   string `json:"Pipeline,omitempty"`
+	LeadSource string `json:"Lead_Source,omitempty"`
 }
 
 type deal struct {
@@ -59,6 +60,39 @@ func CreateDeal(item Deal) (string, error) {
 
 func UpdateDealStage(dealID string, stage string) error {
 	b, err := json.Marshal(&deal{Data: []Deal{{ID: dealID, Stage: stage}}})
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("PUT", "https://www.zohoapis.eu/crm/v3/Deals", bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		b, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		log.Println(string(b))
+		return errors.New(r.Status)
+	}
+	var res updateContactResult
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateDealLeadSource(dealID string, source string) error {
+	b, err := json.Marshal(&deal{Data: []Deal{{ID: dealID, LeadSource: source}}})
 	if err != nil {
 		return err
 	}

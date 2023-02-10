@@ -12,6 +12,20 @@ import (
 )
 
 func AutoUpdateContact(id string) error {
+	did, err := FindDealByContactID(id)
+	if err != nil {
+		return err
+	}
+	if did != "" {
+		c, err := GetContact(id)
+		if err != nil {
+			return err
+		}
+		err = UpdateDealLeadSource(did, c.LeadSource)
+		if err != nil {
+			return err
+		}
+	}
 	emails, err := GetContactEmails(id)
 	if err != nil {
 		return err
