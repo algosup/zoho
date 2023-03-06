@@ -28,6 +28,17 @@ func TestDeal(t *testing.T) {
 	}*/
 }
 
+// go test -run TestGetDeal
+func TestGetDeal(t *testing.T) {
+	d, err := GetDeal("477339000004063513")
+	if err != nil {
+		panic(err)
+	}
+	if d.Stage != "Prospect" {
+		panic(d)
+	}
+}
+
 /*
 func TestDoubleDeal(t *testing.T) {
 	cid, err := FindContact("fordeal@test.com")
