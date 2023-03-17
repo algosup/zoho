@@ -14,6 +14,7 @@ import (
 type Contact struct {
 	ID                string `json:"id,omitempty"`
 	Type              string `json:"Type,omitempty"`
+	Salutation        string `json:"Salutation,omitempty"`
 	FirstName         string `json:"First_Name,omitempty"`
 	LastName          string `json:"Last_Name,omitempty"`
 	Email             string `json:"Email,omitempty"`
@@ -34,6 +35,73 @@ type Contact struct {
 	LastEmailReceived *Time  `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
 	LastNote          *Time  `json:"Last_Note,omitempty"`           // Pointer to support omitempty
 	LastUpdate        *Time  `json:"Last_Update,omitempty"`         // Pointer to support omitempty
+
+	StudyingFor    string `json:"Studying_For,omitempty"`
+	Pathway        string `json:"Pathway,omitempty"`
+	MailingStreet  string `json:"Mailing_Street,omitempty"`
+	MailingCountry string `json:"Mailing_Country,omitempty"`
+	MailingZip     string `json:"Mailing_Zip,omitempty"`
+	MailingCity    string `json:"Mailing_City,omitempty"`
+
+	NSI                           bool `json:"NSI"`
+	SciencesDeLIngNieur           bool `json:"Sciences_de_l_Ing_nieur"`
+	MathMatiques                  bool `json:"Math_matiques"`
+	PhysiqueChimie                bool `json:"Physique_Chimie"`
+	Biologie                      bool `json:"Biologie"`
+	SciencesEconomiquesEtSociales bool `json:"Sciences_Economiques_et_Sociales"`
+	Anglais                       bool `json:"Anglais"`
+	Espagnol                      bool `json:"Espagnol"`
+	LittRaturePhilosophie         bool `json:"Litt_rature_Philosophie"`
+
+	/*
+		Origin                        interface{}   `json:"Origin"`
+		CurrencySymbol                string        `json:"$currency_symbol"`
+		FieldStates                   interface{}   `json:"$field_states"`
+		OtherPhone                    interface{}   `json:"Other_Phone"`
+		MailingState                  interface{}   `json:"Mailing_State"`
+		SharingPermission             string        `json:"$sharing_permission"`
+		LastActivityTime              time.Time     `json:"Last_Activity_Time"`
+		State                         string        `json:"$state"`
+		UnsubscribedMode              interface{}   `json:"Unsubscribed_Mode"`
+		ProcessFlow                   bool          `json:"$process_flow"`
+		TestNewsletterOptOut          bool          `json:"test_Newsletter_Opt_Out"`
+		EnrichStatusS                 interface{}   `json:"Enrich_Status__s"`
+		PotentialLoan                 interface{}   `json:"Potential_loan"`
+		Editable                      bool          `json:"$editable"`
+		ITEC                          bool          `json:"ITEC"`
+		EquipmentNumber               interface{}   `json:"Equipment_Number"`
+		HistoireGOgraphie             bool          `json:"Histoire_G_ographie"`
+		SIN                           bool          `json:"SIN"`
+		TestINE                       interface{}   `json:"test_INE"`
+		MoonshotProjectRepository     interface{}   `json:"Moonshot_Project_Repository"`
+		ZiaOwnerAssignment            interface{}   `json:"$zia_owner_assignment"`
+		SecondaryEmail                interface{}   `json:"Secondary_Email"`
+		VendorName                    interface{}   `json:"Vendor_Name"`
+		CanvasID                      interface{}   `json:"$canvas_id"`
+		School                        interface{}   `json:"School"`
+		Review                        interface{}   `json:"$review"`
+		SNT                           bool          `json:"SNT"`
+		Environnement                 bool          `json:"Environnement"`
+		AdmissionLevel                interface{}   `json:"Admission_Level"`
+		EmailOptOut                   bool          `json:"Email_Opt_Out"`
+		ZiaVisions                    interface{}   `json:"$zia_visions"`
+		DateOfBirth                   interface{}   `json:"Date_of_Birth"`
+		CommunicationMarketing        bool          `json:"Communication_Marketing"`
+		UnsubscribedTime              interface{}   `json:"Unsubscribed_Time"`
+		PlaceOfBirth                  interface{}   `json:"Place_of_birth"`
+		JobTitle                      interface{}   `json:"Job_Title"`
+		Orchestration                 interface{}   `json:"$orchestration"`
+		Pipeline                      interface{}   `json:"Pipeline"`
+		ProgramingExperience          interface{}   `json:"Programing_Experience"`
+		SchoolFair1                   interface{}   `json:"School_Fair1"`
+		GestionFinanceRH              bool          `json:"Gestion_Finance_RH"`
+		SciencesPolitiques            bool          `json:"Sciences_Politiques"`
+		InMerge                       bool          `json:"$in_merge"`
+		Tag                           []interface{} `json:"Tag"`
+		ApprovalState                 string        `json:"$approval_state"`
+		Pathfinder                    interface{}   `json:"$pathfinder"`
+		LastEnrichedTimeS             interface{}   `json:"Last_Enriched_Time__s"`
+	*/
 }
 
 type contact struct {
