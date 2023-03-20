@@ -52,6 +52,11 @@ type Contact struct {
 	Anglais                       bool `json:"Anglais"`
 	Espagnol                      bool `json:"Espagnol"`
 	LittRaturePhilosophie         bool `json:"Litt_rature_Philosophie"`
+	HistoireGOgraphie             bool `json:"Histoire_G_ographie"`
+	SNT                           bool `json:"SNT"`
+	Environnement                 bool `json:"Environnement"`
+	SciencesPolitiques            bool `json:"Sciences_Politiques"`
+	SIN                           bool `json:"SIN"`
 
 	/*
 		Origin                        interface{}   `json:"Origin"`
@@ -70,8 +75,8 @@ type Contact struct {
 		Editable                      bool          `json:"$editable"`
 		ITEC                          bool          `json:"ITEC"`
 		EquipmentNumber               interface{}   `json:"Equipment_Number"`
-		HistoireGOgraphie             bool          `json:"Histoire_G_ographie"`
-		SIN                           bool          `json:"SIN"`
+
+
 		TestINE                       interface{}   `json:"test_INE"`
 		MoonshotProjectRepository     interface{}   `json:"Moonshot_Project_Repository"`
 		ZiaOwnerAssignment            interface{}   `json:"$zia_owner_assignment"`
@@ -80,8 +85,7 @@ type Contact struct {
 		CanvasID                      interface{}   `json:"$canvas_id"`
 		School                        interface{}   `json:"School"`
 		Review                        interface{}   `json:"$review"`
-		SNT                           bool          `json:"SNT"`
-		Environnement                 bool          `json:"Environnement"`
+
 		AdmissionLevel                interface{}   `json:"Admission_Level"`
 		EmailOptOut                   bool          `json:"Email_Opt_Out"`
 		ZiaVisions                    interface{}   `json:"$zia_visions"`
@@ -95,7 +99,6 @@ type Contact struct {
 		ProgramingExperience          interface{}   `json:"Programing_Experience"`
 		SchoolFair1                   interface{}   `json:"School_Fair1"`
 		GestionFinanceRH              bool          `json:"Gestion_Finance_RH"`
-		SciencesPolitiques            bool          `json:"Sciences_Politiques"`
 		InMerge                       bool          `json:"$in_merge"`
 		Tag                           []interface{} `json:"Tag"`
 		ApprovalState                 string        `json:"$approval_state"`

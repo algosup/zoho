@@ -167,7 +167,7 @@ func TestImportNomad(t *testing.T) {
 			case "Physique-Chimie":
 				contact.PhysiqueChimie = true
 			case "Sciences de la Vie et de la Terre":
-				contact.SciencesEconomiquesEtSociales = true
+				contact.Biologie = true
 			case "LLCE Anglais":
 				contact.Anglais = true
 			case "monde contemporain":
