@@ -143,7 +143,7 @@ type GetContactItem struct {
 	Review               interface{}   `json:"$review"`
 	GameDurationMin      int           `json:"Game_Duration_Min"`
 	Phone                string        `json:"Phone"`
-	StudyLevel           interface{}   `json:"Study_level"`
+	StudyLevel           string        `json:"Study_level"`
 	TestScoringCampaigns interface{}   `json:"test_Scoring_Campaigns"`
 	AccountName          interface{}   `json:"Account_Name"`
 	AdmissionLevel       interface{}   `json:"Admission_Level"`
