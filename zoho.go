@@ -156,9 +156,9 @@ type GetContactItem struct {
 	PlaceOfBirth         interface{}   `json:"Place_of_birth"`
 	JobTitle             interface{}   `json:"Job_Title"`
 	Orchestration        interface{}   `json:"$orchestration"`
-	Pipeline             interface{}   `json:"Pipeline"`
+	Pipeline             string        `json:"Pipeline"`
 	ProgramingExperience interface{}   `json:"Programing_Experience"`
-	Type                 interface{}   `json:"Type"`
+	Type                 string        `json:"Type"`
 	S                    interface{}   `json:"s"`
 	LastName             string        `json:"Last_Name"`
 	InMerge              bool          `json:"$in_merge"`
