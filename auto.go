@@ -8,24 +8,60 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
+func normalizePhone(phone, otherPhone string) (string, string) {
+	phone = strings.ReplaceAll(phone, " ", "")
+	phone = strings.ReplaceAll(phone, ".", "")
+	phone = strings.ReplaceAll(phone, "-", "")
+	otherPhone = strings.ReplaceAll(otherPhone, " ", "")
+	otherPhone = strings.ReplaceAll(otherPhone, ".", "")
+	otherPhone = strings.ReplaceAll(otherPhone, "-", "")
+
+	if phone == "" {
+		return phone, otherPhone
+	}
+	if phone[0:3] == "+33" {
+		return phone, otherPhone
+	}
+	if phone[0] == '+' {
+		return "", phone // Move foreign country to other phone
+	}
+
+	if len(phone) == 10 && (phone[0:2] == "06" || phone[0:2] == "07") {
+		return "+33" + phone[1:], otherPhone
+	}
+
+	if len(phone) == 9 && (phone[0] == '6' || phone[0] == '7') {
+		return "+33" + phone, otherPhone
+	}
+
+	return "", phone
+}
+
 func AutoUpdateContact(id string) error {
+
+	c, err := GetContact(id)
+	if err != nil {
+		return err
+	}
+
+	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
+
 	did, err := FindDealByContactID(id)
 	if err != nil {
 		return err
 	}
 	if did != "" {
-		c, err := GetContact(id)
-		if err != nil {
-			return err
-		}
+
 		err = UpdateDealLeadSource(did, c.LeadSource)
 		if err != nil {
 			return err
 		}
 	}
+
 	emails, err := GetContactEmails(id)
 	if err != nil {
 		return err
@@ -54,8 +90,11 @@ func AutoUpdateContact(id string) error {
 	if err != nil {
 		return err
 	}
-	return UpdateContact(Contact{
-		ID:                id,
+	return updateAutoContact(autoContact{
+		ID:         id,
+		Phone:      phone,
+		OtherPhone: otherPhone,
+
 		LastEmailSent:     AsTime(lastSent),
 		LastEmailReceived: AsTime(lastReceived),
 		LastNote:          AsTime(lastNote),

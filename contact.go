@@ -11,6 +11,19 @@ import (
 	"time"
 )
 
+type autoContact struct {
+	ID                string `json:"id,omitempty"`
+	Phone             string `json:"Phone"`
+	OtherPhone        string `json:"Other_Phone"`
+	EmailsReceived    *int   `json:"Emails_Received,omitempty"`
+	EmailsSent        *int   `json:"Emails_Sent,omitempty"`
+	NotesCount        *int   `json:"Notes_Count,omitempty"`
+	LastEmailSent     *Time  `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
+	LastEmailReceived *Time  `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
+	LastNote          *Time  `json:"Last_Note,omitempty"`           // Pointer to support omitempty
+	LastUpdate        *Time  `json:"Last_Update,omitempty"`         // Pointer to support omitempty
+}
+
 type Contact struct {
 	ID                string `json:"id,omitempty"`
 	Type              string `json:"Type,omitempty"`
@@ -19,6 +32,7 @@ type Contact struct {
 	LastName          string `json:"Last_Name,omitempty"`
 	Email             string `json:"Email,omitempty"`
 	Phone             string `json:"Phone,omitempty"`
+	OtherPhone        string `json:"Other_Phone,omitempty"`
 	StudyLevel        string `json:"Study_level,omitempty"`
 	LeadSource        string `json:"Lead_Source,omitempty"`
 	GameStart         *Time  `json:"Game_Start,omitempty"` // Pointer to support omitempty
@@ -62,7 +76,7 @@ type Contact struct {
 		Origin                        interface{}   `json:"Origin"`
 		CurrencySymbol                string        `json:"$currency_symbol"`
 		FieldStates                   interface{}   `json:"$field_states"`
-		OtherPhone                    interface{}   `json:"Other_Phone"`
+
 		MailingState                  interface{}   `json:"Mailing_State"`
 		SharingPermission             string        `json:"$sharing_permission"`
 		LastActivityTime              time.Time     `json:"Last_Activity_Time"`
@@ -113,6 +127,11 @@ type contact struct {
 	Trigger              []string  `json:"trigger"`
 }
 
+type autoContactData struct {
+	Data                 []autoContact `json:"data"`
+	DuplicateCheckFields []string      `json:"duplicate_check_fields"`
+	Trigger              []string      `json:"trigger"`
+}
 type ContactEmail struct {
 	Cc                  interface{} `json:"cc"`
 	HasThreadAttachment bool        `json:"has_thread_attachment"`
@@ -352,6 +371,40 @@ func UpdateContact(item Contact) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
+		b, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		log.Println(string(b))
+		return errors.New(r.Status)
+	}
+
+	var res updateContactResult
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func updateAutoContact(item autoContact) error {
+	//fmt.Println(item)
+	b, err := json.Marshal(&autoContactData{Data: []autoContact{item}})
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("PUT", "https://www.zohoapis.eu/crm/v3/Contacts", bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK && r.StatusCode != http.StatusNoContent {
 		b, err = ioutil.ReadAll(r.Body)
 		if err != nil {
 			return err

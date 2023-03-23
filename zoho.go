@@ -95,7 +95,7 @@ type GetContactItem struct {
 	Email             string      `json:"Email"`
 	CurrencySymbol    string      `json:"$currency_symbol"`
 	FieldStates       interface{} `json:"$field_states"`
-	OtherPhone        interface{} `json:"Other_Phone"`
+	OtherPhone        string      `json:"Other_Phone"`
 	MailingState      interface{} `json:"Mailing_State"`
 	SharingPermission string      `json:"$sharing_permission"`
 	Immersion         interface{} `json:"Immersion"`
