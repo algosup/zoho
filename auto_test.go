@@ -7,7 +7,15 @@ import (
 
 // go test -run TestAuto
 func TestAuto(t *testing.T) {
-	err := AutoUpdateContact("477339000003730433")
+	err := AutoUpdateContact("477339000003181915")
+	if err != nil {
+		panic(err)
+	}
+}
+
+// go test -run TestAuto477339000003181915
+func TestAuto477339000003181915(t *testing.T) {
+	err := AutoUpdateContact("477339000003181915")
 	if err != nil {
 		panic(err)
 	}

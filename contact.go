@@ -12,16 +12,16 @@ import (
 )
 
 type autoContact struct {
-	ID                string `json:"id,omitempty"`
-	Phone             string `json:"Phone"`
-	OtherPhone        string `json:"Other_Phone"`
-	EmailsReceived    *int   `json:"Emails_Received,omitempty"`
-	EmailsSent        *int   `json:"Emails_Sent,omitempty"`
-	NotesCount        *int   `json:"Notes_Count,omitempty"`
-	LastEmailSent     *Time  `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
-	LastEmailReceived *Time  `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
-	LastNote          *Time  `json:"Last_Note,omitempty"`           // Pointer to support omitempty
-	LastUpdate        *Time  `json:"Last_Update,omitempty"`         // Pointer to support omitempty
+	ID                string  `json:"id,omitempty"`
+	Phone             *string `json:"Phone"`
+	OtherPhone        string  `json:"Other_Phone,omitempty"`
+	EmailsReceived    *int    `json:"Emails_Received,omitempty"`
+	EmailsSent        *int    `json:"Emails_Sent,omitempty"`
+	NotesCount        *int    `json:"Notes_Count,omitempty"`
+	LastEmailSent     *Time   `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
+	LastEmailReceived *Time   `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
+	LastNote          *Time   `json:"Last_Note,omitempty"`           // Pointer to support omitempty
+	LastUpdate        *Time   `json:"Last_Update,omitempty"`         // Pointer to support omitempty
 }
 
 type Contact struct {

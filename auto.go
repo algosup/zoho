@@ -90,9 +90,14 @@ func AutoUpdateContact(id string) error {
 	if err != nil {
 		return err
 	}
+
+	p := &phone
+	if phone == "" {
+		p = nil
+	}
 	return updateAutoContact(autoContact{
 		ID:         id,
-		Phone:      phone,
+		Phone:      p,
 		OtherPhone: otherPhone,
 
 		LastEmailSent:     AsTime(lastSent),
