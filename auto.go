@@ -110,6 +110,26 @@ func AutoUpdateContact(id string) error {
 	})
 }
 
+func AutoUpdateContactPhone(id string) error {
+	c, err := GetContact(id)
+	if err != nil {
+		return err
+	}
+
+	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
+
+	p := &phone
+	if phone == "" {
+		p = nil
+	}
+	return updateAutoContact(autoContact{
+		ID:         id,
+		Phone:      p,
+		OtherPhone: otherPhone,
+		LastUpdate: &Time{time.Now()},
+	})
+}
+
 func AsTime(t *time.Time) *Time {
 	if t == nil {
 		return nil
@@ -172,6 +192,32 @@ func AutoUpdateAllContacts() error {
 	}
 	for _, d := range c.Data {
 		err = AutoUpdateContact(d.ID)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+	}
+	return nil
+}
+
+func AutoUpdateAllContactPhones() error {
+	c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
+	if err != nil {
+		return err
+	}
+	for _, d := range c.Data {
+		err = AutoUpdateContactPhone(d.ID)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+	}
+	c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
+	if err != nil {
+		return err
+	}
+	for _, d := range c.Data {
+		err = AutoUpdateContactPhone(d.ID)
 		if err != nil {
 			log.Println(err)
 			continue
