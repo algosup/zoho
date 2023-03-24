@@ -26,6 +26,9 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	if len(phone) < 9 {
 		return "", phone
 	}
+	if len(phone) >= 30 {
+		return "", otherPhone
+	}
 	if phone[0:3] == "+33" {
 		return phone, otherPhone
 	}
@@ -125,12 +128,17 @@ func AutoUpdateContactPhone(id string) error {
 	if phone == "" {
 		p = nil
 	}
-	return updateAutoContact(autoContact{
+	a := autoContact{
 		ID:         id,
 		Phone:      p,
 		OtherPhone: otherPhone,
 		LastUpdate: &Time{time.Now()},
-	})
+	}
+	err = updateAutoContact(a)
+	if err != nil {
+		log.Println(a)
+	}
+	return err
 }
 
 func AsTime(t *time.Time) *Time {
