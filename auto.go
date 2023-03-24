@@ -23,6 +23,9 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	if phone == "" {
 		return phone, otherPhone
 	}
+	if len(phone) < 9 {
+		return "", phone
+	}
 	if phone[0:3] == "+33" {
 		return phone, otherPhone
 	}
