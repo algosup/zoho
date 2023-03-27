@@ -20,9 +20,26 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	otherPhone = strings.ReplaceAll(otherPhone, ".", "")
 	otherPhone = strings.ReplaceAll(otherPhone, "-", "")
 
+	if len(phone) > 12 {
+		return "", phone
+	}
+
+	if phone == "" && len(otherPhone) == 11 && otherPhone[0:2] == "33" {
+		return "+" + otherPhone, ""
+	}
+
 	if phone == "" {
 		return phone, otherPhone
 	}
+
+	if phone == otherPhone {
+		return phone, ""
+	}
+
+	if phone == "+"+otherPhone {
+		return phone, ""
+	}
+
 	if len(phone) < 9 {
 		return "", phone
 	}
@@ -32,6 +49,10 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	if phone[0:3] == "+33" {
 		return phone, otherPhone
 	}
+	if phone[0:2] == "33" && len(phone) == 11 {
+		return "+" + phone, otherPhone
+	}
+
 	if phone[0] == '+' {
 		return "", phone // Move foreign country to other phone
 	}
@@ -101,10 +122,14 @@ func AutoUpdateContact(id string) error {
 	if phone == "" {
 		p = nil
 	}
+	po := &otherPhone
+	if otherPhone == "" {
+		po = nil
+	}
 	return updateAutoContact(autoContact{
 		ID:         id,
 		Phone:      p,
-		OtherPhone: otherPhone,
+		OtherPhone: po,
 
 		LastEmailSent:     AsTime(lastSent),
 		LastEmailReceived: AsTime(lastReceived),
@@ -128,10 +153,14 @@ func AutoUpdateContactPhone(id string) error {
 	if phone == "" {
 		p = nil
 	}
+	po := &otherPhone
+	if otherPhone == "" {
+		po = nil
+	}
 	a := autoContact{
 		ID:         id,
 		Phone:      p,
-		OtherPhone: otherPhone,
+		OtherPhone: po,
 		LastUpdate: &Time{time.Now()},
 	}
 	err = updateAutoContact(a)

@@ -14,7 +14,7 @@ import (
 type autoContact struct {
 	ID                string  `json:"id,omitempty"`
 	Phone             *string `json:"Phone"`
-	OtherPhone        string  `json:"Other_Phone,omitempty"`
+	OtherPhone        *string `json:"Other_Phone"`
 	EmailsReceived    *int    `json:"Emails_Received,omitempty"`
 	EmailsSent        *int    `json:"Emails_Sent,omitempty"`
 	NotesCount        *int    `json:"Notes_Count,omitempty"`
