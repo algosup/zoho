@@ -92,3 +92,30 @@ func TestPhone7(t *testing.T) {
 		panic("+6730901698")
 	}
 }
+
+func TestPhone8(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	p, o := normalizePhone("+330630901698", "123")
+	if p != "+33630901698" || o != "123" {
+		panic("+330630901698")
+	}
+}
+
+func TestPhone9(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	p, o := normalizePhone("+330730901698", "123")
+	if p != "+33730901698" || o != "123" {
+		panic("+330730901698")
+	}
+}
+
+func TestPhone10(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	p, o := normalizePhone("", "+330730901698")
+	if p != "+33730901698" || o != "" {
+		panic("+330730901698")
+	}
+}

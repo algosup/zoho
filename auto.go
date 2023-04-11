@@ -20,12 +20,12 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	otherPhone = strings.ReplaceAll(otherPhone, ".", "")
 	otherPhone = strings.ReplaceAll(otherPhone, "-", "")
 
-	if len(phone) > 12 {
-		return "", phone
-	}
-
 	if phone == "" && len(otherPhone) == 11 && otherPhone[0:2] == "33" {
 		return "+" + otherPhone, ""
+	}
+
+	if phone == "" && len(otherPhone) == 13 && otherPhone[0:3] == "+33" && (otherPhone[3:5] == "06" || otherPhone[3:5] == "07") {
+		return otherPhone[0:3] + otherPhone[4:], ""
 	}
 
 	if phone == "" {
@@ -43,18 +43,16 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	if len(phone) < 9 {
 		return "", phone
 	}
-	if len(phone) >= 30 {
-		return "", otherPhone
+
+	if len(phone) == 13 && phone[0:3] == "+33" && (phone[3:5] == "06" || phone[3:5] == "07") {
+		return phone[0:3] + phone[4:], otherPhone
 	}
+
 	if phone[0:3] == "+33" {
 		return phone, otherPhone
 	}
 	if phone[0:2] == "33" && len(phone) == 11 {
 		return "+" + phone, otherPhone
-	}
-
-	if phone[0] == '+' {
-		return "", phone // Move foreign country to other phone
 	}
 
 	if len(phone) == 10 && (phone[0:2] == "06" || phone[0:2] == "07") {
@@ -63,6 +61,13 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 
 	if len(phone) == 9 && (phone[0] == '6' || phone[0] == '7') {
 		return "+33" + phone, otherPhone
+	}
+
+	if len(phone) > 12 {
+		return "", phone
+	}
+	if phone[0] == '+' {
+		return "", phone // Move foreign country to other phone
 	}
 
 	return "", phone
