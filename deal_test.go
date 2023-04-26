@@ -1,6 +1,11 @@
 package zoho
 
-import "testing"
+import (
+	"fmt"
+	"log"
+	"os"
+	"testing"
+)
 
 func TestDeal(t *testing.T) {
 	id, err := CreateContact(Contact{
@@ -74,5 +79,41 @@ func TestUpdateStage(t *testing.T) {
 	err = UpdateDealStage(did, "Meeting")
 	if err != nil {
 		panic(err)
+	}
+}
+
+// go test -run TestGetStageHistory
+func TestGetStageHistory(t *testing.T) {
+	h, err := GetDealStageHistory("477339000002064028")
+	if err != nil {
+		panic(err)
+	}
+	log.Println(h)
+}
+
+// go test -run TestGetAllDealIds
+func TestGetAllDealIds(t *testing.T) {
+	ids, err := GetDealIdsFromPipeline("2023-2024")
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.OpenFile("History 2023-2024.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+
+	for _, id := range ids {
+		h, err := GetDealStageHistory(id)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(h)
+		for _, ds := range h {
+			if _, err := f.WriteString(fmt.Sprintf("%s;%s;%s\r\n", id, ds.Stage, ds.ModifiedTime)); err != nil {
+				panic(err)
+			}
+		}
 	}
 }

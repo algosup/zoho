@@ -86,6 +86,35 @@ type dealGet struct {
 	Data []DealGet `json:"data"`
 }
 
+type dealStageHistory struct {
+	Data []DealStage `json:"data"`
+	Info struct {
+		PerPage           int         `json:"per_page"`
+		NextPageToken     interface{} `json:"next_page_token"`
+		Count             int         `json:"count"`
+		Page              int         `json:"page"`
+		PreviousPageToken interface{} `json:"previous_page_token"`
+		PageTokenExpiry   interface{} `json:"page_token_expiry"`
+		MoreRecords       bool        `json:"more_records"`
+	} `json:"info"`
+}
+
+type DealStage struct {
+	ModifiedTime time.Time `json:"Modified_Time"`
+	Stage        string    `json:"Stage"`
+	ID           string    `json:"id"`
+}
+
+type selectDealIds struct {
+	Data []struct {
+		ID string `json:"id"`
+	} `json:"data"`
+	Info struct {
+		Count       int  `json:"count"`
+		MoreRecords bool `json:"more_records"`
+	} `json:"info"`
+}
+
 func GetDeal(id string) (*DealGet, error) {
 	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Deals/"+id, nil)
 	if err != nil {
@@ -114,6 +143,116 @@ func GetDeal(id string) (*DealGet, error) {
 	}
 
 	return &res.Data[0], nil
+}
+
+func GetDealStageHistory(id string) ([]DealStage, error) {
+	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Deals/"+id+"/Stage_History?fields=Stage,Modified_Time", nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+		log.Println(string(b))
+		return nil, errors.New(r.Status)
+	}
+
+	var res dealStageHistory
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
+}
+
+/*
+func GetAllDealIds() ([]string, error) {
+	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Deals?fields=Id", nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+	r, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+
+	//if r.StatusCode != http.StatusOK {
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(string(b))
+	return nil, errors.New(r.Status)
+	//}
+
+	var res dealGet
+	err = json.NewDecoder(r.Body).Decode(&res)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil //res.Data, nil
+}
+*/
+
+func GetDealIdsFromPipeline(pipeline string) ([]string, error) {
+	var ids []string
+	offset := 0
+	for {
+		query := fmt.Sprintf("SELECT id FROM Deals WHERE Pipeline = '%s' LIMIT %d,200", pipeline, offset)
+		b, err := json.Marshal(&selectQuery{Query: query})
+		if err != nil {
+			return nil, err
+		}
+
+		req, err := http.NewRequest("POST", "https://www.zohoapis.eu/crm/v3/coql", bytes.NewReader(b))
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
+		req.Header.Set("Content-Type", "text/plain")
+		r, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer r.Body.Close()
+
+		if r.StatusCode == http.StatusNoContent {
+			return ids, nil
+		}
+		if r.StatusCode != http.StatusOK {
+			b, err = ioutil.ReadAll(r.Body)
+			if err != nil {
+				return nil, err
+			}
+			log.Println(string(b))
+			return nil, errors.New(r.Status)
+		}
+		var res selectDealIds
+		err = json.NewDecoder(r.Body).Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range res.Data {
+			ids = append(ids, v.ID)
+		}
+		if !res.Info.MoreRecords {
+			return ids, nil
+		}
+		offset += len(res.Data)
+	}
 }
 
 func CreateDeal(item Deal) (string, error) {
