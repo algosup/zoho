@@ -26,6 +26,7 @@ type autoContact struct {
 
 type Contact struct {
 	ID                string `json:"id,omitempty"`
+	Language          string `json:"Language,omitempty"`
 	Type              string `json:"Type,omitempty"`
 	Salutation        string `json:"Salutation,omitempty"`
 	FirstName         string `json:"First_Name,omitempty"`
