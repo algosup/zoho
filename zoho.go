@@ -86,8 +86,9 @@ type findContactResponse struct {
 }
 
 type GetContactItem struct {
-	Origin interface{} `json:"Origin"`
-	Owner  struct {
+	Language string      `json:"Language"`
+	Origin   interface{} `json:"Origin"`
+	Owner    struct {
 		Name  string `json:"name"`
 		ID    string `json:"id"`
 		Email string `json:"email"`

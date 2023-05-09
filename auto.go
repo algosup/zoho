@@ -80,6 +80,11 @@ func AutoUpdateContact(id string) error {
 		return err
 	}
 
+	lang := c.Language
+	if lang == "" {
+		lang = "fr-FR"
+	}
+
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
 
 	did, err := FindDealByContactID(id)
@@ -133,6 +138,7 @@ func AutoUpdateContact(id string) error {
 	}
 	return updateAutoContact(autoContact{
 		ID:         id,
+		Language:   lang,
 		Phone:      p,
 		OtherPhone: po,
 
@@ -152,6 +158,11 @@ func AutoUpdateContactPhone(id string) error {
 		return err
 	}
 
+	lang := c.Language
+	if lang == "" {
+		lang = "fr-FR"
+	}
+
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
 
 	p := &phone
@@ -164,6 +175,7 @@ func AutoUpdateContactPhone(id string) error {
 	}
 	a := autoContact{
 		ID:         id,
+		Language:   lang,
 		Phone:      p,
 		OtherPhone: po,
 		LastUpdate: &Time{time.Now()},
