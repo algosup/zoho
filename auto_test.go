@@ -24,7 +24,7 @@ func TestAuto477339000003181915(t *testing.T) {
 // go test -run TestAutoAll
 func TestAutoAll(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	err := AutoUpdateAllContactPhones()
+	err := AutoUpdateAllContacts()
 	if err != nil {
 		panic(err)
 	}

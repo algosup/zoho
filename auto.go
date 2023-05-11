@@ -73,8 +73,87 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	return "", phone
 }
 
+/*
 func AutoUpdateContact(id string) error {
 
+		c, err := GetContact(id)
+		if err != nil {
+			return err
+		}
+
+		lang := c.Language
+		if lang == "" {
+			lang = "fr-FR"
+		}
+
+		phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
+
+		did, err := FindDealByContactID(id)
+		if err != nil {
+			return err
+		}
+		if did != "" {
+
+			err = UpdateDealLeadSource(did, c.LeadSource)
+			if err != nil {
+				return err
+			}
+		}
+
+		emails, err := GetContactEmails(id)
+		if err != nil {
+			return err
+		}
+
+		var lastSent *time.Time
+		var lastReceived *time.Time
+		var sent int
+		var received int
+
+		for _, m := range emails {
+			if m.Sent {
+				sent++
+				if lastSent == nil || lastSent.Before(m.Time) {
+					lastSent = &m.Time
+				}
+			} else {
+				received++
+				if lastReceived == nil || lastReceived.Before(m.Time) {
+					lastSent = &m.Time
+				}
+			}
+		}
+
+		notes, lastNote, err := GetContactNotesCount(id)
+		if err != nil {
+			return err
+		}
+
+		p := &phone
+		if phone == "" {
+			p = nil
+		}
+		po := &otherPhone
+		if otherPhone == "" {
+			po = nil
+		}
+		return updateAutoContact(autoContact{
+			ID:         id,
+			Language:   lang,
+			Phone:      p,
+			OtherPhone: po,
+
+			LastEmailSent:     AsTime(lastSent),
+			LastEmailReceived: AsTime(lastReceived),
+			LastNote:          AsTime(lastNote),
+			EmailsSent:        &sent,
+			EmailsReceived:    &received,
+			NotesCount:        &notes,
+			LastUpdate:        &Time{time.Now()},
+		})
+	}
+*/
+func AutoUpdateContact(id string) error {
 	c, err := GetContact(id)
 	if err != nil {
 		return err
@@ -85,82 +164,17 @@ func AutoUpdateContact(id string) error {
 		lang = "fr-FR"
 	}
 
-	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
-
+	pipeline := ""
 	did, err := FindDealByContactID(id)
 	if err != nil {
 		return err
 	}
 	if did != "" {
-
-		err = UpdateDealLeadSource(did, c.LeadSource)
+		d, err := GetDeal(did)
 		if err != nil {
 			return err
 		}
-	}
-
-	emails, err := GetContactEmails(id)
-	if err != nil {
-		return err
-	}
-
-	var lastSent *time.Time
-	var lastReceived *time.Time
-	var sent int
-	var received int
-
-	for _, m := range emails {
-		if m.Sent {
-			sent++
-			if lastSent == nil || lastSent.Before(m.Time) {
-				lastSent = &m.Time
-			}
-		} else {
-			received++
-			if lastReceived == nil || lastReceived.Before(m.Time) {
-				lastSent = &m.Time
-			}
-		}
-	}
-
-	notes, lastNote, err := GetContactNotesCount(id)
-	if err != nil {
-		return err
-	}
-
-	p := &phone
-	if phone == "" {
-		p = nil
-	}
-	po := &otherPhone
-	if otherPhone == "" {
-		po = nil
-	}
-	return updateAutoContact(autoContact{
-		ID:         id,
-		Language:   lang,
-		Phone:      p,
-		OtherPhone: po,
-
-		LastEmailSent:     AsTime(lastSent),
-		LastEmailReceived: AsTime(lastReceived),
-		LastNote:          AsTime(lastNote),
-		EmailsSent:        &sent,
-		EmailsReceived:    &received,
-		NotesCount:        &notes,
-		LastUpdate:        &Time{time.Now()},
-	})
-}
-
-func AutoUpdateContactPhone(id string) error {
-	c, err := GetContact(id)
-	if err != nil {
-		return err
-	}
-
-	lang := c.Language
-	if lang == "" {
-		lang = "fr-FR"
+		pipeline = d.Pipeline
 	}
 
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
@@ -178,8 +192,10 @@ func AutoUpdateContactPhone(id string) error {
 		Language:   lang,
 		Phone:      p,
 		OtherPhone: po,
+		Pipeline:   pipeline,
 		LastUpdate: &Time{time.Now()},
 	}
+
 	err = updateAutoContact(a)
 	if err != nil {
 		log.Println(a)
@@ -231,6 +247,33 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 	return &res, nil
 }
 
+/*
+	func AutoUpdateAllContacts() error {
+		c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
+		if err != nil {
+			return err
+		}
+		for _, d := range c.Data {
+			err = AutoUpdateContact(d.ID)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+		}
+		c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
+		if err != nil {
+			return err
+		}
+		for _, d := range c.Data {
+			err = AutoUpdateContact(d.ID)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+		}
+		return nil
+	}
+*/
 func AutoUpdateAllContacts() error {
 	c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
 	if err != nil {
@@ -249,32 +292,6 @@ func AutoUpdateAllContacts() error {
 	}
 	for _, d := range c.Data {
 		err = AutoUpdateContact(d.ID)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-	}
-	return nil
-}
-
-func AutoUpdateAllContactPhones() error {
-	c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
-	if err != nil {
-		return err
-	}
-	for _, d := range c.Data {
-		err = AutoUpdateContactPhone(d.ID)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-	}
-	c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
-	if err != nil {
-		return err
-	}
-	for _, d := range c.Data {
-		err = AutoUpdateContactPhone(d.ID)
 		if err != nil {
 			log.Println(err)
 			continue

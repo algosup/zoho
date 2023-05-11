@@ -16,6 +16,7 @@ type autoContact struct {
 	Language          string  `json:"Language,omitempty"`
 	Phone             *string `json:"Phone"`
 	OtherPhone        *string `json:"Other_Phone"`
+	Pipeline          string  `json:"Pipeline"`
 	EmailsReceived    *int    `json:"Emails_Received,omitempty"`
 	EmailsSent        *int    `json:"Emails_Sent,omitempty"`
 	NotesCount        *int    `json:"Notes_Count,omitempty"`
