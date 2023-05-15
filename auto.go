@@ -164,17 +164,50 @@ func AutoUpdateContact(id string) error {
 		lang = "fr-FR"
 	}
 
-	pipeline := ""
 	did, err := FindDealByContactID(id)
 	if err != nil {
 		return err
 	}
-	if did != "" {
-		d, err := GetDeal(did)
-		if err != nil {
-			return err
+	pipeline := ""
+	if did == "" {
+		switch c.Type {
+		case "Prospect":
+			switch c.StudyLevel {
+			case "Seconde":
+				pipeline = "2025-2026"
+			case "Première":
+				pipeline = "2024-2025"
+			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
+				pipeline = "2023-2024"
+			}
+		case "Relative":
+			switch c.StudyLevel {
+			case "Seconde":
+				pipeline = "Relative 2025-2026"
+			case "Première":
+				pipeline = "Relative 2024-2025"
+			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
+				pipeline = "Relative 2023-2024"
+			}
 		}
-		pipeline = d.Pipeline
+
+		stage := "Prospect"
+		if c.CodingCamp != nil || c.OpenHouse != nil {
+			stage = "Meeting scheduled"
+		}
+		if pipeline != "" {
+			_, err := CreateDeal(Deal{
+				ContactId:  id,
+				DealName:   c.FirstName + " " + c.LastName,
+				Stage:      stage,
+				Pipeline:   pipeline,
+				LeadSource: c.LeadSource,
+				Amount:     9500,
+			})
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)

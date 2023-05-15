@@ -18,6 +18,7 @@ type Deal struct {
 	Stage      string `json:"Stage,omitempty"`
 	Pipeline   string `json:"Pipeline,omitempty"`
 	LeadSource string `json:"Lead_Source,omitempty"`
+	Amount     int    `json:"Amount"`
 }
 
 type deal struct {
