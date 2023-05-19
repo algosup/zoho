@@ -239,6 +239,7 @@ func AutoUpdateContact(id string) error {
 	}
 
 	if template != "" {
+		log.Println("Sending", template, "to", c.Email)
 		err = SendMail("Natacha BOEZ", "natacha.boez@algosup.com", c.FirstName+" "+c.LastName, c.Email, id, template)
 		if err != nil {
 			log.Println(err)
@@ -251,6 +252,7 @@ func AutoUpdateContact(id string) error {
 func templateToSend(contact *GetContactItem) (template string, short *bool, final *bool) {
 	t := true
 	if contact.GameStart.Before(time.Date(2023, 5, 19, 15, 0, 0, 0, time.UTC)) {
+		// Game started before new messages where in place
 		final = &t
 		return
 	}

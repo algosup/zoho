@@ -5,9 +5,9 @@ import (
 	"testing"
 )
 
-// go test -run TestAuto
+// go test -run ^TestAuto$
 func TestAuto(t *testing.T) {
-	err := AutoUpdateContact("477339000003181915")
+	err := AutoUpdateContact("477339000006747755")
 	if err != nil {
 		panic(err)
 	}
