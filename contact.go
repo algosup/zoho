@@ -12,46 +12,142 @@ import (
 )
 
 type autoContact struct {
-	ID                string  `json:"id,omitempty"`
-	Language          string  `json:"Language,omitempty"`
-	Phone             *string `json:"Phone"`
-	OtherPhone        *string `json:"Other_Phone"`
-	Pipeline          string  `json:"Pipeline"`
-	EmailsReceived    *int    `json:"Emails_Received,omitempty"`
-	EmailsSent        *int    `json:"Emails_Sent,omitempty"`
-	NotesCount        *int    `json:"Notes_Count,omitempty"`
-	LastEmailSent     *Time   `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
-	LastEmailReceived *Time   `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
-	LastNote          *Time   `json:"Last_Note,omitempty"`           // Pointer to support omitempty
-	LastUpdate        *Time   `json:"Last_Update,omitempty"`         // Pointer to support omitempty
+	ID                    string  `json:"id,omitempty"`
+	Language              string  `json:"Language,omitempty"`
+	Phone                 *string `json:"Phone"`
+	OtherPhone            *string `json:"Other_Phone"`
+	Pipeline              string  `json:"Pipeline"`
+	GameTooShortEmailSent *bool   `json:"GameTooShortEmailSent,omitempty"` // Pointer to support omitempty
+	GameFinalEmailSent    *bool   `json:"GameFinalEmailSent,omitempty"`    // Pointer to support omitempty
+	LastUpdate            *Time   `json:"Last_Update,omitempty"`           // Pointer to support omitempty
+
+	EmailsReceived    *int  `json:"Emails_Received,omitempty"`
+	EmailsSent        *int  `json:"Emails_Sent,omitempty"`
+	NotesCount        *int  `json:"Notes_Count,omitempty"`
+	LastEmailSent     *Time `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
+	LastEmailReceived *Time `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
+	LastNote          *Time `json:"Last_Note,omitempty"`           // Pointer to support omitempty
+}
+
+type GetContactItem struct {
+	Language              string `json:"Language"`
+	GameTooShortEmailSent bool   `json:"GameTooShortEmailSent"`
+	GameFinalEmailSent    bool   `json:"GameFinalEmailSent"`
+
+	Origin interface{} `json:"Origin"`
+	Owner  struct {
+		Name  string `json:"name"`
+		ID    string `json:"id"`
+		Email string `json:"email"`
+	} `json:"Owner"`
+	Email             string      `json:"Email"`
+	CurrencySymbol    string      `json:"$currency_symbol"`
+	FieldStates       interface{} `json:"$field_states"`
+	OtherPhone        string      `json:"Other_Phone"`
+	MailingState      interface{} `json:"Mailing_State"`
+	SharingPermission string      `json:"$sharing_permission"`
+	Immersion         interface{} `json:"Immersion"`
+	LastActivityTime  time.Time   `json:"Last_Activity_Time"`
+	State             string      `json:"$state"`
+	UnsubscribedMode  interface{} `json:"Unsubscribed_Mode"`
+	ProcessFlow       bool        `json:"$process_flow"`
+	GameScore30       int         `json:"Game_Score_30"`
+	MailingCountry    interface{} `json:"Mailing_Country"`
+	ID                string      `json:"id"`
+	Approval          struct {
+		Delegate bool `json:"delegate"`
+		Approve  bool `json:"approve"`
+		Reject   bool `json:"reject"`
+		Resubmit bool `json:"resubmit"`
+	} `json:"$approval"`
+	EnrichStatusS interface{} `json:"Enrich_Status__s"`
+	CreatedTime   time.Time   `json:"Created_Time"`
+	PotentialLoan interface{} `json:"Potential_loan"`
+	Editable      bool        `json:"$editable"`
+	GameStart     time.Time   `json:"Game_Start"`
+	TestINE       interface{} `json:"test_INE"`
+	CreatedBy     struct {
+		Name  string `json:"name"`
+		ID    string `json:"id"`
+		Email string `json:"email"`
+	} `json:"Created_By"`
+	SecondaryEmail interface{} `json:"Secondary_Email"`
+	GameMaxScore   int         `json:"Game_Max_Score"`
+	Description    interface{} `json:"Description"`
+	MailingZip     interface{} `json:"Mailing_Zip"`
+	VendorName     interface{} `json:"Vendor_Name"`
+	ReviewProcess  struct {
+		Approve  bool `json:"approve"`
+		Reject   bool `json:"reject"`
+		Resubmit bool `json:"resubmit"`
+	} `json:"$review_process"`
+	MailingStreet        interface{}   `json:"Mailing_Street"`
+	CanvasID             interface{}   `json:"$canvas_id"`
+	Salutation           interface{}   `json:"Salutation"`
+	OpenHouse            interface{}   `json:"Open_House"`
+	FirstName            string        `json:"First_Name"`
+	FullName             string        `json:"Full_Name"`
+	School               interface{}   `json:"School"`
+	Review               interface{}   `json:"$review"`
+	GameDurationMin      int           `json:"Game_Duration_Min"`
+	Phone                string        `json:"Phone"`
+	StudyLevel           string        `json:"Study_level"`
+	TestScoringCampaigns interface{}   `json:"test_Scoring_Campaigns"`
+	AccountName          interface{}   `json:"Account_Name"`
+	AdmissionLevel       interface{}   `json:"Admission_Level"`
+	EmailOptOut          bool          `json:"Email_Opt_Out"`
+	ZiaVisions           interface{}   `json:"$zia_visions"`
+	CodingCamp           interface{}   `json:"Coding_Camp"`
+	DateOfBirth          interface{}   `json:"Date_of_Birth"`
+	MailingCity          interface{}   `json:"Mailing_City"`
+	UnsubscribedTime     interface{}   `json:"Unsubscribed_Time"`
+	PlaceOfBirth         interface{}   `json:"Place_of_birth"`
+	JobTitle             interface{}   `json:"Job_Title"`
+	Orchestration        interface{}   `json:"$orchestration"`
+	Pipeline             string        `json:"Pipeline"`
+	ProgramingExperience interface{}   `json:"Programing_Experience"`
+	Type                 string        `json:"Type"`
+	S                    interface{}   `json:"s"`
+	LastName             string        `json:"Last_Name"`
+	InMerge              bool          `json:"$in_merge"`
+	LeadSource           string        `json:"Lead_Source"`
+	Tag                  []interface{} `json:"Tag"`
+	ApprovalState        string        `json:"$approval_state"`
+	Pathfinder           interface{}   `json:"$pathfinder"`
+	LastEnrichedTimeS    interface{}   `json:"Last_Enriched_Time__s"`
 }
 
 type Contact struct {
-	ID                string `json:"id,omitempty"`
-	Language          string `json:"Language,omitempty"`
-	Type              string `json:"Type,omitempty"`
-	Salutation        string `json:"Salutation,omitempty"`
-	FirstName         string `json:"First_Name,omitempty"`
-	LastName          string `json:"Last_Name,omitempty"`
-	Email             string `json:"Email,omitempty"`
-	Phone             string `json:"Phone,omitempty"`
-	OtherPhone        string `json:"Other_Phone,omitempty"`
-	StudyLevel        string `json:"Study_level,omitempty"`
-	LeadSource        string `json:"Lead_Source,omitempty"`
-	GameStart         *Time  `json:"Game_Start,omitempty"` // Pointer to support omitempty
-	GameScore30       int    `json:"Game_Score_30,omitempty"`
-	GameMaxScore      int    `json:"Game_Max_Score,omitempty"`
-	GameDurationMin   int    `json:"Game_Duration_Min,omitempty"`
-	OpenHouse         *Date  `json:"Open_House,omitempty"`  // Pointer to support omitempty
-	CodingCamp        *Date  `json:"Coding_Camp,omitempty"` // Pointer to support omitempty
-	Immersion         *Date  `json:"Immersion,omitempty"`   // Pointer to support omitempty
-	EmailsReceived    *int   `json:"Emails_Received,omitempty"`
-	EmailsSent        *int   `json:"Emails_Sent,omitempty"`
-	NotesCount        *int   `json:"Notes_Count,omitempty"`
-	LastEmailSent     *Time  `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
-	LastEmailReceived *Time  `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
-	LastNote          *Time  `json:"Last_Note,omitempty"`           // Pointer to support omitempty
-	LastUpdate        *Time  `json:"Last_Update,omitempty"`         // Pointer to support omitempty
+	ID              string `json:"id,omitempty"`
+	Language        string `json:"Language,omitempty"`
+	Type            string `json:"Type,omitempty"`
+	Salutation      string `json:"Salutation,omitempty"`
+	FirstName       string `json:"First_Name,omitempty"`
+	LastName        string `json:"Last_Name,omitempty"`
+	Email           string `json:"Email,omitempty"`
+	Phone           string `json:"Phone,omitempty"`
+	OtherPhone      string `json:"Other_Phone,omitempty"`
+	StudyLevel      string `json:"Study_level,omitempty"`
+	LeadSource      string `json:"Lead_Source,omitempty"`
+	GameStart       *Time  `json:"Game_Start,omitempty"` // Pointer to support omitempty
+	GameScore30     int    `json:"Game_Score_30,omitempty"`
+	GameMaxScore    int    `json:"Game_Max_Score,omitempty"`
+	GameDurationMin int    `json:"Game_Duration_Min,omitempty"`
+	OpenHouse       *Date  `json:"Open_House,omitempty"`  // Pointer to support omitempty
+	CodingCamp      *Date  `json:"Coding_Camp,omitempty"` // Pointer to support omitempty
+	Immersion       *Date  `json:"Immersion,omitempty"`   // Pointer to support omitempty
+
+	GameTooShortEmailSent *bool `json:"GameTooShortEmailSent,omitempty"` // Pointer to support omitempty
+	GameFinalEmailSent    *bool `json:"GameFinalEmailSent,omitempty"`    // Pointer to support omitempty
+
+	LastUpdate *Time `json:"Last_Update,omitempty"` // Pointer to support omitempty
+
+	EmailsReceived    *int  `json:"Emails_Received,omitempty"`
+	EmailsSent        *int  `json:"Emails_Sent,omitempty"`
+	NotesCount        *int  `json:"Notes_Count,omitempty"`
+	LastEmailSent     *Time `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
+	LastEmailReceived *Time `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
+	LastNote          *Time `json:"Last_Note,omitempty"`           // Pointer to support omitempty
 
 	StudyingFor    string `json:"Studying_For,omitempty"`
 	Pathway        string `json:"Pathway,omitempty"`

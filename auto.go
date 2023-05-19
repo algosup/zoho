@@ -168,26 +168,26 @@ func AutoUpdateContact(id string) error {
 	if err != nil {
 		return err
 	}
-	pipeline := ""
+	c.Pipeline = ""
 	if did == "" {
 		switch c.Type {
 		case "Prospect":
 			switch c.StudyLevel {
 			case "Seconde":
-				pipeline = "2025-2026"
+				c.Pipeline = "2025-2026"
 			case "Première":
-				pipeline = "2024-2025"
+				c.Pipeline = "2024-2025"
 			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
-				pipeline = "2023-2024"
+				c.Pipeline = "2023-2024"
 			}
 		case "Relative":
 			switch c.StudyLevel {
 			case "Seconde":
-				pipeline = "Relative 2025-2026"
+				c.Pipeline = "Relative 2025-2026"
 			case "Première":
-				pipeline = "Relative 2024-2025"
+				c.Pipeline = "Relative 2024-2025"
 			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
-				pipeline = "Relative 2023-2024"
+				c.Pipeline = "Relative 2023-2024"
 			}
 		}
 
@@ -195,12 +195,12 @@ func AutoUpdateContact(id string) error {
 		if c.CodingCamp != nil || c.OpenHouse != nil {
 			stage = "Meeting scheduled"
 		}
-		if pipeline != "" {
+		if c.Pipeline != "" {
 			_, err := CreateDeal(Deal{
 				ContactId:  id,
 				DealName:   c.FirstName + " " + c.LastName,
 				Stage:      stage,
-				Pipeline:   pipeline,
+				Pipeline:   c.Pipeline,
 				LeadSource: c.LeadSource,
 				Amount:     9500,
 			})
@@ -225,15 +225,119 @@ func AutoUpdateContact(id string) error {
 		Language:   lang,
 		Phone:      p,
 		OtherPhone: po,
-		Pipeline:   pipeline,
+		Pipeline:   c.Pipeline,
 		LastUpdate: &Time{time.Now()},
 	}
 
+	template, short, final := templateToSend(c)
+	a.GameTooShortEmailSent = short
+	a.GameFinalEmailSent = final
 	err = updateAutoContact(a)
 	if err != nil {
 		log.Println(a)
+		return err
 	}
-	return err
+
+	if template != "" {
+		err = SendMail("Natacha BOEZ", "natacha.boez@algosup.com", c.FirstName+" "+c.LastName, c.Email, id, template)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+	return nil
+}
+
+func templateToSend(contact *GetContactItem) (template string, short *bool, final *bool) {
+	t := true
+	if contact.GameStart.Before(time.Date(2023, 5, 19, 15, 0, 0, 0, time.UTC)) {
+		final = &t
+		return
+	}
+	if contact.GameFinalEmailSent {
+		return
+	}
+
+	if contact.GameStart.After(time.Now().Add(-time.Hour)) {
+		// Game started less than an hour ago
+		return
+	}
+
+	if contact.GameScore30 >= 18 {
+		// Good score
+		if contact.Type == "Relative" {
+			if contact.Language == "fr-FR" {
+				return "477339000003757016", short, &t
+			} else {
+				return "477339000006666221", short, &t
+			}
+		}
+		if contact.Type == "Prospect" {
+			if contact.Pipeline == "2023-2024" {
+				if contact.Language == "fr-FR" {
+					return "477339000002799418", short, &t
+				} else {
+					return "477339000006666202", short, &t
+				}
+			}
+			if contact.Pipeline == "2024-2025" {
+				if contact.Language == "fr-FR" {
+					return "477339000002907148", short, &t
+				} else {
+					return "477339000006666174", short, &t
+				}
+			}
+			if contact.Pipeline == "2025-2026" {
+				if contact.Language == "fr-FR" {
+					return "477339000006666309", short, &t
+				} else {
+					return "477339000006666298", short, &t
+				}
+			}
+		}
+		if contact.Pipeline == "" {
+			if contact.Language == "fr-FR" {
+				return "477339000002907121", short, &t
+			} else {
+				return "477339000006666263", short, &t
+			}
+		}
+
+	} else {
+		// Bad score
+		if contact.GameDurationMin >= 30 {
+			// Long
+			if contact.Type == "Relative" {
+				if contact.Language == "fr-FR" {
+					return "477339000003757051", short, &t
+				} else {
+					return "477339000006666248", short, &t
+				}
+			}
+			if contact.Type == "Prospect" {
+				if contact.Language == "fr-FR" {
+					return "477339000003757081", short, &t
+				} else {
+					return "477339000006666320", short, &t
+				}
+			}
+		} else {
+			// Short
+			if contact.GameTooShortEmailSent {
+				// No more than one email for duration
+				return
+			}
+			if contact.Type == "Prospect" {
+				if contact.Language == "fr-FR" {
+					return "477339000002799429", &t, final
+				} else {
+					return "477339000006666151", &t, final
+				}
+			}
+		}
+	}
+
+	return
 }
 
 func AsTime(t *time.Time) *Time {
