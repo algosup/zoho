@@ -307,15 +307,16 @@ func templateToSend(contact *GetContactItem) (template string, short *bool, fina
 
 	} else {
 		// Bad score
+		if contact.Type == "Relative" {
+			if contact.Language == "fr-FR" {
+				return "477339000003757051", short, &t
+			} else {
+				return "477339000006666248", short, &t
+			}
+		}
 		if contact.GameDurationMin >= 30 {
 			// Long
-			if contact.Type == "Relative" {
-				if contact.Language == "fr-FR" {
-					return "477339000003757051", short, &t
-				} else {
-					return "477339000006666248", short, &t
-				}
-			}
+
 			if contact.Type == "Prospect" {
 				if contact.Language == "fr-FR" {
 					return "477339000003757081", short, &t
