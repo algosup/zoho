@@ -251,11 +251,17 @@ func AutoUpdateContact(id string) error {
 
 func templateToSend(contact *GetContactItem) (template string, short *bool, final *bool) {
 	t := true
+	f := false
 	if contact.GameStart.Before(time.Date(2023, 5, 19, 15, 0, 0, 0, time.UTC)) {
 		// Game started before new messages where in place
-		final = &t
+		if contact.GameStart.IsZero() {
+			final = &f
+		} else {
+			final = &t
+		}
 		return
 	}
+
 	if contact.GameFinalEmailSent {
 		return
 	}
