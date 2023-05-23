@@ -1,7 +1,7 @@
 
 digraph G {
 
-Play -> "Mail?" [label="Last game\rfinished\rmore than\r15 minutes ago"]
+Play -> "Mail?" [label="Game started\rmore than\ran hour ago"]
 "Mail?"->"Good" [label="Score >= 18"]
 "Mail?"->"Bad" [label="Score < 18"]
 "Bad"->"Short" [label="Duration < 30"]
