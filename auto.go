@@ -208,6 +208,12 @@ func AutoUpdateContact(id string) error {
 				return err
 			}
 		}
+	} else {
+		deal, err := GetDeal(did)
+		if err != nil {
+			return err
+		}
+		c.Pipeline = deal.Pipeline
 	}
 
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
@@ -252,13 +258,16 @@ func AutoUpdateContact(id string) error {
 func templateToSend(contact *GetContactItem) (template string, short *bool, final *bool) {
 	t := true
 	f := false
+
+	if contact.GameStart.IsZero() {
+		final = &f
+		return
+	}
+
 	if contact.GameStart.Before(time.Date(2023, 5, 19, 15, 0, 0, 0, time.UTC)) {
 		// Game started before new messages where in place
-		if contact.GameStart.IsZero() {
-			final = &f
-		} else {
-			final = &t
-		}
+
+		final = &t
 		return
 	}
 
