@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -35,7 +35,7 @@ func Select[V any](query string) ([]V, error) {
 		return nil, nil
 	}
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}
