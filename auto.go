@@ -174,20 +174,20 @@ func AutoUpdateContact(id string) error {
 		case "Prospect":
 			switch c.StudyLevel {
 			case "Seconde":
-				c.Pipeline = "2025-2026"
+				c.Pipeline = "2026-2027"
 			case "Première":
-				c.Pipeline = "2024-2025"
+				c.Pipeline = "2025-2026"
 			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
-				c.Pipeline = "2023-2024"
+				c.Pipeline = "2024-2025"
 			}
 		case "Relative":
 			switch c.StudyLevel {
 			case "Seconde":
-				c.Pipeline = "Relative 2025-2026"
+				c.Pipeline = "Relative 2026-2027"
 			case "Première":
-				c.Pipeline = "Relative 2024-2025"
+				c.Pipeline = "Relative 2025-2026"
 			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
-				c.Pipeline = "Relative 2023-2024"
+				c.Pipeline = "Relative 2024-2025"
 			}
 		}
 
