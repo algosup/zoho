@@ -290,21 +290,21 @@ func templateToSend(contact *GetContactItem) (template string, short *bool, fina
 			}
 		}
 		if contact.Type == "Prospect" {
-			if contact.Pipeline == "2023-2024" {
+			if contact.Pipeline == "2024-2025" {
 				if contact.Language == "fr-FR" {
 					return "477339000002799418", short, &t
 				} else {
 					return "477339000006666202", short, &t
 				}
 			}
-			if contact.Pipeline == "2024-2025" {
+			if contact.Pipeline == "2025-2026" {
 				if contact.Language == "fr-FR" {
 					return "477339000002907148", short, &t
 				} else {
 					return "477339000006666174", short, &t
 				}
 			}
-			if contact.Pipeline == "2025-2026" {
+			if contact.Pipeline == "2026-2027" {
 				if contact.Language == "fr-FR" {
 					return "477339000006666309", short, &t
 				} else {
