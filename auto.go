@@ -180,7 +180,7 @@ func AutoUpdateContact(id string) error {
 			case "Terminale", "BAC", "BAC+1", "BAC+2", "BAC+3":
 				c.Pipeline = "2024-2025"
 			}
-		case "Relative":
+		case "Relative", "Student Relative":
 			switch c.StudyLevel {
 			case "Seconde":
 				c.Pipeline = "Relative 2026-2027"
