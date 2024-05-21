@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -214,6 +214,7 @@ func AutoUpdateContact(id string) error {
 			return err
 		}
 		c.Pipeline = deal.Pipeline
+		c.Stage = deal.Stage
 	}
 
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
@@ -232,6 +233,7 @@ func AutoUpdateContact(id string) error {
 		Phone:      p,
 		OtherPhone: po,
 		Pipeline:   c.Pipeline,
+		Stage:      c.Stage,
 		LastUpdate: &Time{time.Now()},
 	}
 
@@ -387,7 +389,7 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 		return &findContactResponse{}, nil
 	}
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}

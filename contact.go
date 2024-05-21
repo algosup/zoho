@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,6 +18,7 @@ type autoContact struct {
 	Phone                 *string `json:"Phone"`
 	OtherPhone            *string `json:"Other_Phone"`
 	Pipeline              string  `json:"Pipeline"`
+	Stage                 string  `json:"Stage"`
 	GameTooShortEmailSent *bool   `json:"GameTooShortEmailSent,omitempty"` // Pointer to support omitempty
 	GameFinalEmailSent    *bool   `json:"GameFinalEmailSent,omitempty"`    // Pointer to support omitempty
 	LastUpdate            *Time   `json:"Last_Update,omitempty"`           // Pointer to support omitempty
@@ -105,6 +107,7 @@ type GetContactItem struct {
 	JobTitle             interface{}   `json:"Job_Title"`
 	Orchestration        interface{}   `json:"$orchestration"`
 	Pipeline             string        `json:"Pipeline"`
+	Stage                string        `json:"Stage"`
 	ProgramingExperience interface{}   `json:"Programing_Experience"`
 	Type                 string        `json:"Type"`
 	S                    interface{}   `json:"s"`
@@ -333,7 +336,7 @@ func DeleteContact(id string) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
@@ -361,7 +364,7 @@ func GetContactEmails(id string) ([]ContactEmail, error) {
 	}
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -395,7 +398,7 @@ func GetContactNotesCount(id string) (int, *time.Time, error) {
 	}
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return 0, nil, err
 		}
@@ -438,7 +441,7 @@ func CreateContact(item Contact) (string, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusCreated {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return "", err
 		}
@@ -470,7 +473,7 @@ func UpdateContact(item Contact) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
