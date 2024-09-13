@@ -306,7 +306,7 @@ func GetContact(id string) (*GetContactItem, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}

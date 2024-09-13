@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -129,7 +129,7 @@ func GetDeal(id string) (*DealGet, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -159,7 +159,7 @@ func GetDealStageHistory(id string) ([]DealStage, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -234,7 +234,7 @@ func GetDealIdsFromPipeline(pipeline string) ([]string, error) {
 			return ids, nil
 		}
 		if r.StatusCode != http.StatusOK {
-			b, err = ioutil.ReadAll(r.Body)
+			b, err = io.ReadAll(r.Body)
 			if err != nil {
 				return nil, err
 			}
@@ -274,7 +274,7 @@ func CreateDeal(item Deal) (string, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusCreated {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return "", err
 		}
@@ -307,7 +307,7 @@ func UpdateDealStage(dealID string, stage string) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
@@ -340,7 +340,7 @@ func UpdateDealLeadSource(dealID string, source string) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
@@ -378,7 +378,7 @@ func FindDealByContactID(id string) (string, error) {
 	}
 
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return "", err
 		}
