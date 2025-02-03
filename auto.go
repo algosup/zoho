@@ -282,6 +282,14 @@ func templateToSend(contact *GetContactItem) (template string, short *bool, fina
 		return
 	}
 
+	if contact.Language == "fr-FR" {
+		if contact.GameMaxScore >= 16 {
+			return "477339000034193061", short, &t
+		} else {
+			return "477339000034193078", short, &t
+		}
+	}
+
 	if contact.GameScore30 >= 18 {
 		// Good score
 		if contact.Type == "Relative" {
