@@ -288,84 +288,13 @@ func templateToSend(contact *GetContactItem) (template string, short *bool, fina
 		} else {
 			return "477339000034193078", short, &t
 		}
-	}
-
-	if contact.GameScore30 >= 18 {
-		// Good score
-		if contact.Type == "Relative" {
-			if contact.Language == "fr-FR" {
-				return "477339000003757016", short, &t
-			} else {
-				return "477339000006666221", short, &t
-			}
-		}
-		if contact.Type == "Prospect" {
-			if contact.Pipeline == "2025-2026" {
-				if contact.Language == "fr-FR" {
-					return "477339000002799418", short, &t
-				} else {
-					return "477339000006666202", short, &t
-				}
-			}
-			if contact.Pipeline == "2026-2027" {
-				if contact.Language == "fr-FR" {
-					return "477339000002907148", short, &t
-				} else {
-					return "477339000006666174", short, &t
-				}
-			}
-			if contact.Pipeline == "2027-2028" {
-				if contact.Language == "fr-FR" {
-					return "477339000006666309", short, &t
-				} else {
-					return "477339000006666298", short, &t
-				}
-			}
-		}
-		if contact.Pipeline == "" {
-			if contact.Language == "fr-FR" {
-				return "477339000002907121", short, &t
-			} else {
-				return "477339000006666263", short, &t
-			}
-		}
-
 	} else {
-		// Bad score
-		if contact.Type == "Relative" {
-			if contact.Language == "fr-FR" {
-				return "477339000003757051", short, &t
-			} else {
-				return "477339000006666248", short, &t
-			}
-		}
-		if contact.GameDurationMin >= 30 {
-			// Long
-
-			if contact.Type == "Prospect" {
-				if contact.Language == "fr-FR" {
-					return "477339000003757081", short, &t
-				} else {
-					return "477339000006666320", short, &t
-				}
-			}
+		if contact.GameMaxScore >= 16 {
+			return "477339000034553001", short, &t
 		} else {
-			// Short
-			if contact.GameTooShortEmailSent {
-				// No more than one email for duration
-				return
-			}
-			if contact.Type == "Prospect" {
-				if contact.Language == "fr-FR" {
-					return "477339000002799429", &t, final
-				} else {
-					return "477339000006666151", &t, final
-				}
-			}
+			return "477339000034553020", short, &t
 		}
 	}
-
-	return
 }
 
 func AsTime(t *time.Time) *Time {
