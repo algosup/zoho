@@ -6,31 +6,42 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
 
 type autoContact struct {
-	ID                    string  `json:"id,omitempty"`
-	Language              string  `json:"Language,omitempty"`
-	Phone                 *string `json:"Phone"`
-	OtherPhone            *string `json:"Other_Phone"`
-	Pipeline              string  `json:"Pipeline"`
-	Stage                 string  `json:"Stage"`
-	GameTooShortEmailSent *bool   `json:"GameTooShortEmailSent,omitempty"` // Pointer to support omitempty
-	GameFinalEmailSent    *bool   `json:"GameFinalEmailSent,omitempty"`    // Pointer to support omitempty
-	LastUpdate            *Time   `json:"Last_Update,omitempty"`           // Pointer to support omitempty
-
-	EmailsReceived    *int  `json:"Emails_Received,omitempty"`
-	EmailsSent        *int  `json:"Emails_Sent,omitempty"`
-	NotesCount        *int  `json:"Notes_Count,omitempty"`
-	LastEmailSent     *Time `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
-	LastEmailReceived *Time `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
-	LastNote          *Time `json:"Last_Note,omitempty"`           // Pointer to support omitempty
+	ID         string `json:"id,omitempty"`
+	Language   string `json:"Language,omitempty"`
+	Phone      string `json:"Phone"`
+	OtherPhone string `json:"Other_Phone"`
+	Pipeline   string `json:"Pipeline"`
+	Stage      string `json:"Stage"`
+	//GameTooShortEmailSent *bool   `json:"GameTooShortEmailSent,omitempty"` // Pointer to support omitempty
+	GameFinalEmailSent bool `json:"GameFinalEmailSent,omitempty"` // Pointer to support omitempty
+	//LastUpdate            *Time   `json:"Last_Update,omitempty"`           // Pointer to support omitempty
+	/*
+		EmailsReceived    *int  `json:"Emails_Received,omitempty"`
+		EmailsSent        *int  `json:"Emails_Sent,omitempty"`
+		NotesCount        *int  `json:"Notes_Count,omitempty"`
+		LastEmailSent     *Time `json:"Last_Email_Sent,omitempty"`     // Pointer to support omitempty
+		LastEmailReceived *Time `json:"Last_Email_Received,omitempty"` // Pointer to support omitempty
+		LastNote          *Time `json:"Last_Note,omitempty"`           // Pointer to support omitempty
+	*/
 }
 
+/*
+	func (t autoContact) Equal(other autoContact) bool {
+		return t.ID == other.ID &&
+			t.Language == other.Language &&
+			*t.Phone == *other.Phone &&
+			*t.OtherPhone == *other.OtherPhone &&
+			t.Pipeline == other.Pipeline &&
+			t.Stage == other.Stage &&
+			t.GameFinalEmailSent == other.GameFinalEmailSent
+	}
+*/
 type GetContactItem struct {
 	Language              string `json:"Language"`
 	GameTooShortEmailSent bool   `json:"GameTooShortEmailSent"`
@@ -507,7 +518,7 @@ func updateAutoContact(item autoContact) error {
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK && r.StatusCode != http.StatusNoContent {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
@@ -547,7 +558,7 @@ func FindContact(email string) (string, error) {
 		return "", nil
 	}
 	if r.StatusCode != http.StatusOK {
-		b, err = ioutil.ReadAll(r.Body)
+		b, err = io.ReadAll(r.Body)
 		if err != nil {
 			return "", err
 		}

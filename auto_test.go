@@ -13,6 +13,14 @@ func TestAuto(t *testing.T) {
 	}
 }
 
+// go test -v -run TestAutoUpdateAllContacts
+func TestAutoUpdateAllContacts(t *testing.T) {
+	err := AutoUpdateAllContacts()
+	if err != nil {
+		panic(err)
+	}
+}
+
 // go test -run TestAuto477339000003181915
 func TestAuto477339000003181915(t *testing.T) {
 	err := AutoUpdateContact("477339000003181915")

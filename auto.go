@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -73,90 +74,19 @@ func normalizePhone(phone, otherPhone string) (string, string) {
 	return "", phone
 }
 
-/*
-func AutoUpdateContact(id string) error {
-
-		c, err := GetContact(id)
-		if err != nil {
-			return err
-		}
-
-		lang := c.Language
-		if lang == "" {
-			lang = "fr-FR"
-		}
-
-		phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
-
-		did, err := FindDealByContactID(id)
-		if err != nil {
-			return err
-		}
-		if did != "" {
-
-			err = UpdateDealLeadSource(did, c.LeadSource)
-			if err != nil {
-				return err
-			}
-		}
-
-		emails, err := GetContactEmails(id)
-		if err != nil {
-			return err
-		}
-
-		var lastSent *time.Time
-		var lastReceived *time.Time
-		var sent int
-		var received int
-
-		for _, m := range emails {
-			if m.Sent {
-				sent++
-				if lastSent == nil || lastSent.Before(m.Time) {
-					lastSent = &m.Time
-				}
-			} else {
-				received++
-				if lastReceived == nil || lastReceived.Before(m.Time) {
-					lastSent = &m.Time
-				}
-			}
-		}
-
-		notes, lastNote, err := GetContactNotesCount(id)
-		if err != nil {
-			return err
-		}
-
-		p := &phone
-		if phone == "" {
-			p = nil
-		}
-		po := &otherPhone
-		if otherPhone == "" {
-			po = nil
-		}
-		return updateAutoContact(autoContact{
-			ID:         id,
-			Language:   lang,
-			Phone:      p,
-			OtherPhone: po,
-
-			LastEmailSent:     AsTime(lastSent),
-			LastEmailReceived: AsTime(lastReceived),
-			LastNote:          AsTime(lastNote),
-			EmailsSent:        &sent,
-			EmailsReceived:    &received,
-			NotesCount:        &notes,
-			LastUpdate:        &Time{time.Now()},
-		})
-	}
-*/
 func AutoUpdateContact(id string) error {
 	c, err := GetContact(id)
 	if err != nil {
 		return err
+	}
+	original := autoContact{
+		ID:                 c.ID,
+		Language:           c.Language,
+		Phone:              c.Phone,
+		OtherPhone:         c.OtherPhone,
+		Pipeline:           c.Pipeline,
+		Stage:              c.Stage,
+		GameFinalEmailSent: c.GameFinalEmailSent,
 	}
 
 	lang := c.Language
@@ -219,31 +149,22 @@ func AutoUpdateContact(id string) error {
 
 	phone, otherPhone := normalizePhone(c.Phone, c.OtherPhone)
 
-	p := &phone
-	if phone == "" {
-		p = nil
-	}
-	po := &otherPhone
-	if otherPhone == "" {
-		po = nil
-	}
-	a := autoContact{
-		ID:         id,
-		Language:   lang,
-		Phone:      p,
-		OtherPhone: po,
-		Pipeline:   c.Pipeline,
-		Stage:      c.Stage,
-		LastUpdate: &Time{time.Now()},
-	}
+	a := original
+	a.Phone = phone
+	a.OtherPhone = otherPhone
+	template := templateToSend(c)
+	a.GameFinalEmailSent = c.GameFinalEmailSent || template != ""
+	a.Pipeline = c.Pipeline
+	a.Stage = c.Stage
+	a.Language = lang
 
-	template, short, final := templateToSend(c)
-	a.GameTooShortEmailSent = short
-	a.GameFinalEmailSent = final
-	err = updateAutoContact(a)
-	if err != nil {
-		log.Println(a)
-		return err
+	if !reflect.DeepEqual(original, a) {
+		//log.Println(a, original)
+		err = updateAutoContact(a)
+		if err != nil {
+			log.Println(a)
+			return err
+		}
 	}
 
 	if template != "" {
@@ -257,42 +178,37 @@ func AutoUpdateContact(id string) error {
 	return nil
 }
 
-func templateToSend(contact *GetContactItem) (template string, short *bool, final *bool) {
-	t := true
-	f := false
-
+func templateToSend(contact *GetContactItem) string {
 	if contact.GameStart.IsZero() {
-		final = &f
-		return
+		return ""
 	}
 
 	if contact.GameStart.Before(time.Date(2023, 5, 19, 15, 0, 0, 0, time.UTC)) {
 		// Game started before new messages where in place
 
-		final = &t
-		return
+		return ""
 	}
 
 	if contact.GameFinalEmailSent {
-		return
+		return ""
 	}
 
 	if contact.GameStart.After(time.Now().Add(-time.Hour)) {
 		// Game started less than an hour ago
-		return
+		return ""
 	}
 
 	if contact.Language == "fr-FR" {
 		if contact.GameMaxScore >= 16 {
-			return "477339000034193061", short, &t
+			return "477339000034193061"
 		} else {
-			return "477339000034193078", short, &t
+			return "477339000034193078"
 		}
 	} else {
 		if contact.GameMaxScore >= 16 {
-			return "477339000034553001", short, &t
+			return "477339000034553001"
 		} else {
-			return "477339000034553020", short, &t
+			return "477339000034553020"
 		}
 	}
 }
@@ -369,10 +285,16 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 	}
 */
 func AutoUpdateAllContacts() error {
-	c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
+	start := time.Now()
+	last, err := GetLastAutoZoho()
 	if err != nil {
 		return err
 	}
+	c, err := getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Modified_Time > '%s'", last.Format("2006-01-02T15:04:05-07:00")))
+	if err != nil {
+		return err
+	}
+	log.Println(c.Data)
 	for _, d := range c.Data {
 		err = AutoUpdateContact(d.ID)
 		if err != nil {
@@ -380,16 +302,5 @@ func AutoUpdateAllContacts() error {
 			continue
 		}
 	}
-	c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
-	if err != nil {
-		return err
-	}
-	for _, d := range c.Data {
-		err = AutoUpdateContact(d.ID)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-	}
-	return nil
+	return SetLastAutoZoho(start)
 }

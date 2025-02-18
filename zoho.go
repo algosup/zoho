@@ -102,38 +102,31 @@ type createNote struct {
 var auth Auth
 
 func init() {
-	/*
-		var err error
-		for i := 0; i < 10; i++ {
-			err := authenticate()
-			if err == nil {
-				break
-			}
-			log.Println(err)
-			time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
-		}*/
-	err := authenticate()
-	if err != nil {
-		log.Fatal(err)
+	var err error
+	for i := 0; i < 10; i++ {
+		err := authenticate()
+		if err == nil {
+			break
+		}
+		log.Println(err)
+		time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
 	}
-	/*
-		go func() {
-			for {
-				time.Sleep(time.Duration(auth.ExpiresIn-60) * time.Second)
-				for i := 0; i < 10; i++ {
-					err := authenticate()
-					if err == nil {
-						break
-					}
-					log.Println(err)
-					time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
+	go func() {
+		for {
+			time.Sleep(time.Duration(auth.ExpiresIn-60) * time.Second)
+			for i := 0; i < 10; i++ {
+				err := authenticate()
+				if err == nil {
+					break
 				}
-				if err != nil {
-					log.Println(err)
-				}
+				log.Println(err)
+				time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
 			}
-		}()
-	*/
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}()
 }
 
 type Date struct {
@@ -172,7 +165,8 @@ func (t *Time) UnmarshalJSON(b []byte) (err error) {
 }
 
 func authenticate() error {
-	r, err := http.Post("https://accounts.zoho.eu/oauth/v2/token?refresh_token="+os.Getenv("ZOHO_REFRESH_TOKEN")+"&client_id="+os.Getenv("ZOHO_CLIENT_ID")+"&client_secret="+os.Getenv("ZOHO_CLIENT_SECRET")+"&grant_type=refresh_token", "", nil)
+	url := "https://accounts.zoho.eu/oauth/v2/token?refresh_token=" + os.Getenv("ZOHO_REFRESH_TOKEN") + "&client_id=" + os.Getenv("ZOHO_CLIENT_ID") + "&client_secret=" + os.Getenv("ZOHO_CLIENT_SECRET") + "&grant_type=refresh_token"
+	r, err := http.Post(url, "", nil)
 	if err != nil {
 		return err
 	}
