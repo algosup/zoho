@@ -175,6 +175,27 @@ func AutoUpdateContact(id string) error {
 			return err
 		}
 	}
+
+	brevo := BrevoContact{
+		Email:         c.Email,
+		UpdateEnabled: true,
+		Attributes: Attributes{
+			LastName:   c.LastName,
+			FirstName:  c.FirstName,
+			Pipeline:   c.Pipeline,
+			Type:       c.Type,
+			LeadSource: c.LeadSource,
+			MaxScore:   c.GameMaxScore,
+			SMS:        c.Phone,
+			WhatsApp:   c.Phone,
+		},
+		ListIds: []int{17},
+	}
+	err = CreateBrevoContact(brevo)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 
@@ -257,33 +278,6 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 	return &res, nil
 }
 
-/*
-	func AutoUpdateAllContacts() error {
-		c, err := getContactsFromQuery("SELECT id FROM Contacts WHERE Last_Update is null ORDER BY Last_Update ASC")
-		if err != nil {
-			return err
-		}
-		for _, d := range c.Data {
-			err = AutoUpdateContact(d.ID)
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-		}
-		c, err = getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Last_Update <= '%s' ORDER BY Last_Update ASC", time.Now().Add(-24*time.Hour).Format("2006-01-02T15:04:05-07:00")))
-		if err != nil {
-			return err
-		}
-		for _, d := range c.Data {
-			err = AutoUpdateContact(d.ID)
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-		}
-		return nil
-	}
-*/
 func AutoUpdateAllContacts() error {
 	start := time.Now()
 	last, err := GetLastAutoZoho()
@@ -294,7 +288,7 @@ func AutoUpdateAllContacts() error {
 	if err != nil {
 		return err
 	}
-	log.Println(c.Data)
+	//log.Println(c.Data)
 	for _, d := range c.Data {
 		err = AutoUpdateContact(d.ID)
 		if err != nil {
