@@ -14,13 +14,6 @@ import (
 	"time"
 )
 
-// https://api-console.zoho.eu/
-// ZohoCRM.modules.ALL,ZohoSearch.securesearch.READ,ZohoCRM.coql.READ,ZohoCRM.send_mail.all.CREATE,ZohoCRM.settings.emails.READ
-
-// curl -X POST -F grant_type=authorization_code -F client_id=1000.XXXXXXXXXX -F client_secret=XXXXX -F code=1000.XXXXXXXXXXXXXXXXXX https://accounts.zoho.eu/oauth/v2/token
-
-// curl -X POST "https://accounts.zoho.eu/oauth/v2/token?refresh_token=1000.XXXXXXXXXXXXXX&client_id=1000.XXXXXXXXXXXXX&client_secret=XXXXXXXXXX&grant_type=refresh_token"
-
 type Auth struct {
 	AccessToken string `json:"access_token"`
 	APIDomain   string `json:"api_domain"`
@@ -109,34 +102,38 @@ type createNote struct {
 var auth Auth
 
 func init() {
-	var err error
-	for i := 0; i < 10; i++ {
-		err := authenticate()
-		if err == nil {
-			break
-		}
-		log.Println(err)
-		time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
-	}
+	/*
+		var err error
+		for i := 0; i < 10; i++ {
+			err := authenticate()
+			if err == nil {
+				break
+			}
+			log.Println(err)
+			time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
+		}*/
+	err := authenticate()
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
-	go func() {
-		for {
-			time.Sleep(time.Duration(auth.ExpiresIn-60) * time.Second)
-			for i := 0; i < 10; i++ {
-				err := authenticate()
-				if err == nil {
-					break
+	/*
+		go func() {
+			for {
+				time.Sleep(time.Duration(auth.ExpiresIn-60) * time.Second)
+				for i := 0; i < 10; i++ {
+					err := authenticate()
+					if err == nil {
+						break
+					}
+					log.Println(err)
+					time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
 				}
-				log.Println(err)
-				time.Sleep(time.Duration(i+1) * 100 * time.Millisecond)
+				if err != nil {
+					log.Println(err)
+				}
 			}
-			if err != nil {
-				log.Println(err)
-			}
-		}
-	}()
+		}()
+	*/
 }
 
 type Date struct {
@@ -198,40 +195,6 @@ func authenticate() error {
 	}
 	return nil
 }
-
-// Scope:  ZohoCRM.modules.all and ZohoSearch.securesearch.READ
-/*
-func FindContact(email string) (string, error) {
-	req, err := http.NewRequest("GET", "https://www.zohoapis.eu/crm/v3/Contacts/search?email="+url.QueryEscape(email), nil)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
-	r, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer r.Body.Close()
-
-	if r.StatusCode == http.StatusNoContent {
-		return "", nil
-	}
-	if r.StatusCode != http.StatusOK {
-		b, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			return "", err
-		}
-		log.Println(string(b))
-		return "", errors.New(r.Status)
-	}
-	var res getContactResponse
-	err = json.NewDecoder(r.Body).Decode(&res)
-	if err != nil {
-		return "", err
-	}
-
-	return res.Data[0].ID, nil
-}*/
 
 type selectQuery struct {
 	Query string `json:"select_query"`
