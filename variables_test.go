@@ -3,14 +3,12 @@ package zoho
 import (
 	"log"
 	"testing"
-	"time"
 )
 
 // go test -v -run TestZohoVariable
 
 func TestZohoVariable(t *testing.T) {
-	time := time.Now()
-	err := SetLastAutoZoho(time)
+	err := SetLastAutoZoho("2006-01-02T15:04:05-07:00")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -20,19 +18,7 @@ func TestZohoVariable(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	if time.UTC().Year() != nt.Year() {
-		log.Fatal("bad month")
-	}
-	if time.UTC().Month() != nt.Month() {
-		log.Fatal("bad month")
-	}
-	if time.UTC().Day() != nt.Day() {
-		log.Fatal("bad month")
-	}
-	if time.UTC().Hour() != nt.Hour() {
-		log.Fatal("bad hour")
-	}
-	if time.UTC().Minute() != nt.Minute() {
-		log.Fatal("bad hour")
+	if nt != "2006-01-02T15:04:05-07:00" {
+		log.Fatal()
 	}
 }

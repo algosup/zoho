@@ -78,6 +78,13 @@ type findContactResponse struct {
 	} `json:"data"`
 }
 
+type modifiedContactResponse struct {
+	Data []struct {
+		ID       string `json:"id"`
+		Modified string `json:"Modified_Time"`
+	} `json:"data"`
+}
+
 type createNote struct {
 	Data []struct {
 		Message string `json:"message"`

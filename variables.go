@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type VariableGroup struct {
@@ -38,13 +37,13 @@ type OAuthResponse struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-func GetLastAutoZoho() (time.Time, error) {
+func GetLastAutoZoho() (string, error) {
 
 	url := "https://www.zohoapis.eu/crm/v7/settings/variables/477339000035617041"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return time.Time{}, err
+		return "", err
 	}
 	req.Header.Set("Authorization", "Zoho-oauthtoken "+auth.AccessToken)
 	req.Header.Set("Content-Type", "application/json")
@@ -52,33 +51,29 @@ func GetLastAutoZoho() (time.Time, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return time.Time{}, err
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return time.Time{}, err
+		return "", err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return time.Time{}, errors.New(resp.Status)
+		return "", errors.New(resp.Status)
 	}
 
 	var data Response
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return time.Time{}, err
+		return "", err
 	}
 
-	laz, err := time.Parse("2006-01-02T15:04:05Z07:00", data.Variables[0].Value)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return laz, nil
+	return data.Variables[0].Value, nil
 }
 
-func SetLastAutoZoho(date time.Time) error {
+func SetLastAutoZoho(date string) error {
 	url := "https://www.zohoapis.eu/crm/v7/settings/variables/477339000035617041"
 
 	json := fmt.Sprintf(`{
@@ -87,7 +82,7 @@ func SetLastAutoZoho(date time.Time) error {
 				"id": "477339000035617029",
 				"value": "%s"
 			}]
-	}`, date.UTC().Format("2006-01-02T15:04:05Z07:00"))
+	}`, date)
 
 	req, err := http.NewRequest("PUT", url, strings.NewReader(json))
 	if err != nil {

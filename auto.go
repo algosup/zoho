@@ -241,7 +241,7 @@ func AsTime(t *time.Time) *Time {
 	return &Time{*t}
 }
 
-func getContactsFromQuery(query string) (*findContactResponse, error) {
+func getContactsFromQuery(query string) (*modifiedContactResponse, error) {
 	b, err := json.Marshal(&selectQuery{Query: query})
 	if err != nil {
 		return nil, err
@@ -260,7 +260,7 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode == http.StatusNoContent {
-		return &findContactResponse{}, nil
+		return &modifiedContactResponse{}, nil
 	}
 	if r.StatusCode != http.StatusOK {
 		b, err = io.ReadAll(r.Body)
@@ -270,7 +270,7 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 		log.Println(string(b))
 		return nil, errors.New(r.Status)
 	}
-	var res findContactResponse
+	var res modifiedContactResponse
 	err = json.NewDecoder(r.Body).Decode(&res)
 	if err != nil {
 		return nil, err
@@ -279,22 +279,26 @@ func getContactsFromQuery(query string) (*findContactResponse, error) {
 }
 
 func AutoUpdateAllContacts() error {
-	start := time.Now()
 	last, err := GetLastAutoZoho()
 	if err != nil {
 		return err
 	}
-	c, err := getContactsFromQuery(fmt.Sprintf("SELECT id FROM Contacts WHERE Modified_Time > '%s'", last.Format("2006-01-02T15:04:05-07:00")))
+	c, err := getContactsFromQuery(fmt.Sprintf("SELECT id,Modified_Time FROM Contacts WHERE Created_Time > '2025-02-18T00:00:00-00:00' AND Modified_Time > '%s' ORDER BY Modified_Time ASC", last))
 	if err != nil {
 		return err
 	}
 	//log.Println(c.Data)
+	l := last
 	for _, d := range c.Data {
 		err = AutoUpdateContact(d.ID)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
+		l = d.Modified
 	}
-	return SetLastAutoZoho(start)
+	if l != last {
+		err = SetLastAutoZoho(l)
+	}
+	return err
 }
