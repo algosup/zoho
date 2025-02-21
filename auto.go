@@ -194,7 +194,11 @@ func AutoUpdateContact(id string) error {
 	err = CreateBrevoContact(brevo)
 	if err != nil {
 		log.Println(err)
-		return err
+		log.Println(brevo)
+
+		brevo.Attributes.SMS = ""
+		brevo.Attributes.WhatsApp = ""
+		return CreateBrevoContact(brevo) // Try again without phone number
 	}
 	return nil
 }
@@ -283,7 +287,7 @@ func AutoUpdateAllContacts() error {
 	if err != nil {
 		return err
 	}
-	c, err := getContactsFromQuery(fmt.Sprintf("SELECT id,Modified_Time FROM Contacts WHERE Created_Time > '2025-02-18T00:00:00-00:00' AND Modified_Time > '%s' ORDER BY Modified_Time ASC", last))
+	c, err := getContactsFromQuery(fmt.Sprintf("SELECT id,Modified_Time FROM Contacts WHERE Created_Time > '2025-02-06T00:17:00-00:00' AND Modified_Time > '%s' ORDER BY Modified_Time ASC", last))
 	if err != nil {
 		return err
 	}
